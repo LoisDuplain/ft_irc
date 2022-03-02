@@ -4,8 +4,8 @@ INCS_DIR		=	includes
 SRCS_DIR		=	sources
 COMPILED_DIR	=	.objs
 
-INCS_FILES		=	$(wildcard $(INCSS_DIR)/*.hpp) $(wildcard $(INCSS_DIR)/*/*.hpp) $(wildcard $(INCSS_DIR)/*/*/*.hpp) $(wildcard $(INCSS_DIR)/*/*/*/*.hpp) $(wildcard $(INCSS_DIR)/*/*/*/*/*.hpp)
-SRCS_FILES		=	$(wildcard $(SRCS_DIR)/*.cpp) $(wildcard $(SRCS_DIR)/*/*.cpp) $(wildcard $(SRCS_DIR)/*/*/*.cpp) $(wildcard $(SRCS_DIR)/*/*/*/*.cpp) $(wildcard $(SRCS_DIR)/*/*/*/*/*.cpp)
+INCS_FILES		=	$(wildcard $(INCSS_DIR)/*.hpp) $(wildcard $(INCSS_DIR)/*/*.hpp) $(wildcard $(INCSS_DIR)/*/*/*.hpp) $(wildcard $(INCSS_DIR)/*/*/*/*.hpp)
+SRCS_FILES		=	$(wildcard $(SRCS_DIR)/*.cpp) $(wildcard $(SRCS_DIR)/*/*.cpp) $(wildcard $(SRCS_DIR)/*/*/*.cpp) $(wildcard $(SRCS_DIR)/*/*/*/*.cpp)
 
 OBJS			=	$(SRCS_FILES:$(SRCS_DIR)/%.cpp=$(COMPILED_DIR)/%.o)
 
