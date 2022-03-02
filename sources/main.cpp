@@ -1,7 +1,17 @@
 #include <iostream>
 
-int	main(void)
+#include "Server.hpp"
+
+using namespace std;
+
+int	main(int argc, char **argv)
 {
-	std::cout << "Hello world !" << std::endl;
+	if (argc != 3)
+	{
+		cout << "Usage: ./ircserver <port> <password>" << endl;
+		return (1);
+	}
+	Server server = Server(string(argv[1]), string(argv[2]));
+	cout << "Starting server on port " << server.getPort() << ". (password: " << server.getPassword() << ")" << endl;
 	return (0);
 }
