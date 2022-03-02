@@ -2,16 +2,17 @@
 
 #include <iostream>
 #include <string>
+#include <stdlib.h>
 
 class Server
 {
 private:
-	const std::string _port;
+	const int _port;
 	const std::string _password;
 public:
 	Server(std::string port, std::string passord);
 	~Server();
 
-	const std::string getPort(void)	const;
+	int getPort(void)	const;
 	const std::string getPassword(void)	const;
 };
