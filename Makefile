@@ -14,11 +14,11 @@ FLAGS			=	-Wall -Wextra -Werror -std=c++98
 
 all: $(NAME)
 
-$(COMPILED_DIR)/%.o:$(SRCS_DIR)/%.cpp	$(INCS_FILES)
+$(COMPILED_DIR)/%.o:$(SRCS_DIR)/%.cpp	$(SRCS_FILES) $(INCS_FILES)
 	mkdir -p $(@D)
 	$(CC) $(FLAGS) -I $(INCS_DIR) -o $@ -c $<
 
-$(NAME): $(INCS_FILES) $(OBJS)
+$(NAME):	$(SRCS_FILES) $(INCS_FILES) $(OBJS)
 	$(CC) $(FLAGS) -I $(INCS_DIR) -o $(NAME) $(OBJS)
 
 clean:
