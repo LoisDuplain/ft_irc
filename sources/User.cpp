@@ -21,26 +21,21 @@ User::~User()
 {
 }
 
+/* Messaging */
 void	User::sendMessage(User *from, std::string message)	const
 {
 	std::string	new_message;
 
 	if (from != NULL)
-	{
-		new_message.append(from->getNickname());
-		new_message.append(": ");
-	}
+		new_message.append(from->getNickname()).append(": ");
 	else
-	{
-		new_message.append("[");
-		new_message.append("SERVER");
-		new_message.append("] ");
-	}
+		new_message.append("[SERVER] ");
 	new_message.append(message);
 	new_message.append("\n\0");
 	send(_socket, new_message.c_str(), new_message.size(), 0);
 }
 
+/* Getters */
 int					User::getSocket(void)		const
 {
 	return this->_socket;
@@ -69,7 +64,25 @@ bool				User::isOp(void)			const
 {
 	return this->_op;
 }
+Channel				*User::getChannel(void)		const
+{
+	return this->_channel;
+}
 
+/* Setter */
+bool				User::setChannel(Channel *channel)
+{
+	if (channel == NULL || channel == _channel)
+		return false;
+	if (_channel != NULL && !_channel->removeUser(this))
+		return false;
+	_channel = channel;
+	if (!_channel->addUser(this))
+		return false;
+	return true;
+}
+
+/* Print */
 std::ostream	&operator<<(std::ostream &ostream, User const &o)
 {
 	ostream

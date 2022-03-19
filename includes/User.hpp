@@ -6,6 +6,10 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#include "Channel.hpp"
+
+class Channel;
+
 class User
 {
 private:
@@ -19,12 +23,15 @@ private:
 	bool		_authenticated;
 
 	bool		_op;
+
+	Channel		*_channel;
 public:
 	User(void);
 	User(int socket);
 	User &operator=(User const &rhs);
 	~User();
 
+	/* Messaging */
 	void	sendMessage(User *from, std::string message)	const;
 
 	int					getSocket(void)			const;
@@ -34,6 +41,10 @@ public:
 	bool				isConnected(void)		const;
 	bool				isAuthenticated(void)	const;
 	bool				isOp(void)				const;
+	Channel				*getChannel(void)		const;
+
+	/* Setter */
+	bool				setChannel(Channel *channel);
 };
 
 std::ostream	&operator<<(std::ostream &ostream, User const &o);
