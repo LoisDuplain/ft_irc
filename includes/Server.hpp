@@ -10,13 +10,17 @@
 #include <unistd.h>
 #include <sys/types.h>
 
+#include "User.hpp"
+#include "Channel.hpp"
+
 class Server
 {
 private:
 	int			_port;
 	std::string	_password;
 
-	std::map<int, User *>	_users;
+	std::map<int, User *>				_users;
+	std::map<std::string, Channel *>	_channels;
 
 	int					_master_socket;
 	fd_set				_master_fds;
@@ -30,19 +34,24 @@ public:
 	Server &operator=(Server const &o);
 	~Server();
 
+	/* Life cycle */
 	void	start(void);
-	
 	void	loop(void);
 	void	readSocket(int socket);
-	
 	void	stop(void);
 
+	/* User */
 	bool	createUser(int user_socket);
 	void	disconnectUser(User *user);
+	User	*getUser(std::string nickname);
+	User	*getUser(int socket);
 
-	void	sendMessageToUser(User &from, std::string to, std::string message)		const;	// TODO
-	void	sendMessageToUser(User &from, User &to, std::string message)			const;	// TODO
+	/* Channel */
+	bool	createChannel(std::string name);
+	bool	removeChannel(std::string name);
+	Channel	*getChannel(std::string name);
 
+	/* Getters */
 	int					getPort(void)		const;
 	const std::string	getPassword(void)	const;
 };
