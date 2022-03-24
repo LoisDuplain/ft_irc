@@ -1,4 +1,4 @@
-NAME			=	ircserver
+NAME			=	ircserv
 
 INCS_DIR		=	includes
 SRCS_DIR		=	sources
