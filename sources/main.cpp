@@ -2,32 +2,30 @@
 
 #include "Server.hpp"
 
-using namespace std;
-
 int	main(int argc, char **argv)
 {
 	if (argc != 3)
 	{
-		cout << "Usage: ./ircserver <port> <password>" << endl;
+		std::cout << "Usage: ./ircserver <port> <password>" << std::endl;
 		return (1);
 	}
 	Server server;
 	try
 	{
-		server = Server(string(argv[1]), string(argv[2]));
+		server = Server(std::string(argv[1]), std::string(argv[2]));
 		server.start();
 	}
-	catch (invalid_argument const& ex)
+	catch (std::invalid_argument const& ex)
 	{
-		cerr << "Wrong port format." << endl;
+		std::cerr << "Wrong port format." << std::endl;
 	}
-	catch (out_of_range const& ex)
+	catch (std::out_of_range const& ex)
 	{
-		cerr << "Wrong port. Must be contained between 0 and 65535." << endl;
+		std::cerr << "Wrong port. Must be contained between 0 and 65535." << std::endl;
 	}
-	catch (exception const& ex)
+	catch (std::exception const& ex)
 	{
-		cerr << ex.what() << endl;
+		std::cerr << ex.what() << std::endl;
 	}
 	server.loop();
 	server.stop();
