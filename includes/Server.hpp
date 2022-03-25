@@ -10,14 +10,21 @@
 #include <unistd.h>
 #include <sys/types.h>
 
+#include "Utils.hpp"
 #include "User.hpp"
 #include "Channel.hpp"
+
+#include "commands/CommandManager.hpp"
+#include "commands/PassCommand.hpp"
+#include "commands/NickCommand.hpp"
 
 class Server
 {
 private:
 	int			_port;
 	std::string	_password;
+
+	CommandManager	_commandManager;
 
 	std::map<int, User *>				_users;
 	std::map<std::string, Channel *>	_channels;
@@ -39,6 +46,10 @@ public:
 	void	loop(void);
 	void	readSocket(int socket);
 	void	stop(void);
+
+	/* Command */
+	void	registerCommands(void);
+	void	executeCommand(User *commandSender, std::vector<std::string> args);
 
 	/* User */
 	bool	createUser(int user_socket);

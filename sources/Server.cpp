@@ -52,6 +52,8 @@ void	Server::start(void)
 
 	FD_SET(_master_socket, &_master_fds);
 	_max_fd = _master_socket;
+
+	registerCommands();
 }
 void	Server::loop(void)
 {
@@ -98,14 +100,39 @@ void	Server::readSocket(int socket)
 	buff[readed_bytes - 1] = '\0';
 	if (strlen(buff) == 0)
 		return;
-	std::cout << *user << ": -" << buff << "-" << std::endl;
+	std::cout << *user << ": " << buff << std::endl;
+	executeCommand(user, tokenizeCommand(std::string(buff)));
 }
 void	Server::stop(void)
 {
+	_commandManager.unregisterCommands();
+
 	std::map<int, User *>::iterator it;
 	for (it = _users.begin(); it != _users.end(); it++)
 		disconnectUser(it->second);
 	close(_master_socket);
+}
+
+/* Command */
+void	Server::registerCommands(void)
+{
+	_commandManager.registerCommand(new PassCommand(this));
+	_commandManager.registerCommand(new NickCommand(this));
+}
+void	Server::executeCommand(User *commandSender, std::vector<std::string> args)
+{
+	if (args.size() <= 0)
+		return;
+	
+	ACommand *command = _commandManager.getCommand(args.at(0));
+	if (command == NULL)
+	{
+		commandSender->sendMessage(NULL, "Unknown command");
+		return;
+	}
+
+	if (!command->preExecute(commandSender, args))
+		commandSender->sendMessage(NULL, "Command not well executed.");
 }
 
 /* User */
@@ -121,7 +148,7 @@ bool	Server::createUser(int user_socket)
 	if (user_socket > _max_fd)
 		_max_fd = user_socket;
 	
-	std::cout << "[+] User " << *newUser << " connected." << std::endl;
+	std::cout << "[+] User " << *newUser << " created." << std::endl;
 	newUser->sendMessage(NULL, "Connection to server established");
 	
 	return true;
