@@ -26,16 +26,21 @@ void	User::sendMessage(User *from, std::string message)	const
 {
 	std::string	new_message;
 
+	if (_nickname.empty())
+		return;
+
 	if (from != NULL)
 		new_message.append(from->getNickname()).append(": ");
 	else
-		new_message.append("[SERVER] ");
+		new_message.append(":SERVER NOTICE ");
+	new_message.append(_nickname);
+	new_message.append(" :");
 	new_message.append(message);
 	new_message.append("\n\0");
 	send(_socket, new_message.c_str(), new_message.size(), 0);
 }
 
-/* Getters */
+/* Getter */
 int					User::getSocket(void)		const
 {
 	return this->_socket;
@@ -70,6 +75,30 @@ Channel				*User::getChannel(void)		const
 }
 
 /* Setter */
+void				User::setNickname(std::string nickname)
+{
+	this->_nickname = nickname;
+}
+void				User::setUsername(std::string username)
+{
+	this->_username = username;
+}
+void				User::setRealName(std::string real_name)
+{
+	this->_real_name = real_name;
+}
+void				User::setConnected(bool state)
+{
+	this->_connected = state;
+}
+void				User::setAuthenticated(bool state)
+{
+	this->_authenticated = state;
+}
+void				User::setOp(bool state)
+{
+	this->_op = state;
+}
 bool				User::setChannel(Channel *channel)
 {
 	if (channel == NULL || channel == _channel)
@@ -89,7 +118,7 @@ std::ostream	&operator<<(std::ostream &ostream, User const &o)
 	<< "\""
 	<< ((o.getNickname() == "") ? "NULL" : o.getNickname())
 	<< "\""
-	<< " (socket: "
+	<< " (sckt: "
 	<< o.getSocket()
 	<< ")";
 	return ostream;

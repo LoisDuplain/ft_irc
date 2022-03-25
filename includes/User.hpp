@@ -34,6 +34,7 @@ public:
 	/* Messaging */
 	void	sendMessage(User *from, std::string message)	const;
 
+	/* Getter */
 	int					getSocket(void)			const;
 	const	std::string	getNickname(void)		const;
 	const	std::string	getUsername(void)		const;
@@ -44,6 +45,12 @@ public:
 	Channel				*getChannel(void)		const;
 
 	/* Setter */
+	void				setNickname(std::string nickname);
+	void				setUsername(std::string username);
+	void				setRealName(std::string real_name);
+	void				setConnected(bool state);
+	void				setAuthenticated(bool state);
+	void				setOp(bool state);
 	bool				setChannel(Channel *channel);
 };
 
