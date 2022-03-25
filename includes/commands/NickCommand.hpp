@@ -2,11 +2,11 @@
 
 #include "ACommand.hpp"
 
-class PassCommand	:	public ACommand
+class NickCommand	:	public ACommand
 {
 public:
-	PassCommand(Server *server);
-	~PassCommand(void);
+	NickCommand(Server *server);
+	~NickCommand(void);
 
 	virtual bool execute(User *commandSender, std::vector<std::string> args);
 };
