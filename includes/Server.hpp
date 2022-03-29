@@ -17,6 +17,8 @@
 #include "commands/CommandManager.hpp"
 #include "commands/PassCommand.hpp"
 #include "commands/NickCommand.hpp"
+#include "commands/UserCommand.hpp"
+#include "commands/JoinCommand.hpp"
 
 class Server
 {
@@ -58,7 +60,7 @@ public:
 	User	*getUser(int socket);
 
 	/* Channel */
-	bool	createChannel(std::string name);
+	bool	createChannel(std::string name, std::string password, bool isInviteOnly, size_t max_size);
 	bool	removeChannel(std::string name);
 	Channel	*getChannel(std::string name);
 
