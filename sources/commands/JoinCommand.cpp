@@ -16,7 +16,6 @@ std::vector<std::string> parseArg(std::string s)
 	std::string token;
 	while ((pos = s.find(delimiter)) != std::string::npos) {
     	token = s.substr(0, pos);
-		std::cout << token << std::endl;
 		res.push_back(token);
     	s.erase(0, pos + delimiter.length());
 	}
@@ -32,24 +31,23 @@ bool	JoinCommand::execute(User *commandSender, std::vector<std::string> args)
 
 	if (args.size() <= 1 || args.at(1).empty())
 	{
-		commandSender->sendMessage(NULL, replaceErrorArgs(ERR_NEEDMOREPARAMS, "JOIN", ""));
+		commandSender->sendMessage(NULL, "Not enough parameters");
 		return false;
 	}
     
-	channels = parseArg(args.at(1));
 	try
 	{
+		channels = parseArg(args.at(1));
 		keys = parseArg(args.at(2));
 	}
 	catch(const std::exception& e)
 	{
-		
 	}
 	
 
 	if (channels.size() > 2)
 	{
-		commandSender->sendMessage(NULL, replaceErrorArgs(ERR_TOOMANYCHANNELS, "", ""));
+		commandSender->sendMessage(NULL, "Too many channels specified");
 		return false;
 	}
 
@@ -57,20 +55,20 @@ bool	JoinCommand::execute(User *commandSender, std::vector<std::string> args)
 	{
 		Channel *ch = getServer()->getChannel(channels.at(i));
 		if (ch == NULL)
-			commandSender->sendMessage(NULL, replaceErrorArgs(ERR_NOSUCHCHANNEL, channels.at(i), ""));
+			commandSender->sendMessage(NULL, "Channel not found");
 		else if (ch->getBanUser(commandSender->getNickname()) == commandSender)
-			commandSender->sendMessage(NULL, replaceErrorArgs(ERR_BANNEDFROMCHAN, channels.at(i), ""));
+			commandSender->sendMessage(NULL, "You are banned from this channel");
 		else if (ch->isInviteOnly())
-			commandSender->sendMessage(NULL, replaceErrorArgs(ERR_INVITEONLYCHAN, channels.at(i), ""));
+			commandSender->sendMessage(NULL, "You must be invited to join this channel");
 		else if (ch->getUsers().size() == ch->getMaxSize())
-			commandSender->sendMessage(NULL, replaceErrorArgs(ERR_CHANNELISFULL, channels.at(i), ""));
+			commandSender->sendMessage(NULL, "The target channel is full");
 		else if ((keys.size() > 0 && ch->getPassword() != keys.at(i)) || (keys.size() == 0 && ch->getPassword() != ""))
-			commandSender->sendMessage(NULL, replaceErrorArgs(ERR_BADCHANNELKEY, channels.at(i), ""));
-		else if (ch->getUser(commandSender->getNickname()) != commandSender)
+			commandSender->sendMessage(NULL, "Wrong channel key");
+		else if (ch->getUser(commandSender->getNickname()) == NULL)
 		{
 			ch->addUser(commandSender);
 			commandSender->addChannel(ch);
-			commandSender->sendMessage(NULL, "You are now logged into channel :" + channels.at(i));
+			commandSender->sendMessage(NULL, "You have joined the channel: " + channels.at(i));
 		}
 		i++;
 	}

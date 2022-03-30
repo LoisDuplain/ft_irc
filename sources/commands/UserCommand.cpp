@@ -9,38 +9,32 @@ UserCommand::~UserCommand(void)
 
 bool	UserCommand::execute(User *commandSender, std::vector<std::string> args)
 {
-	if (args.size() <= 4 || args.at(1).empty() || args.at(4)[0] != ':' || !args.at(4)[1])
+	if (args.size() <= 4 || args.at(1).empty() || args.at(4)[0] != ':' || args.at(4)[1] == '\0')
 	{
-		commandSender->sendMessage(NULL, replaceErrorArgs(ERR_NEEDMOREPARAMS, "USER", ""));
+		commandSender->sendMessage(NULL, "Not enough parameters");
 		return false;
 	}
 
-	if (commandSender->getUsername() != "")
+	if (!commandSender->getUsername().empty())
 	{
-		commandSender->sendMessage(NULL, replaceErrorArgs(ERR_ALREADYREGISTRED, "", ""));
+		commandSender->sendMessage(NULL, "You are already registered");
 		return false;
 	}
-
-	commandSender->setUsername(args.at(1));
-	std::string tmp = args.at(4);
-	size_t i = 5;
-	while (i < args.size())
-	{
-		tmp.append(" ");
-		tmp.append(args.at(i++));
-	}
-
-	tmp.erase(tmp.begin());
 	
-	commandSender->setRealName(tmp);
-	commandSender->sendMessage(NULL, "Your username have been set to: " + args.at(1));
-	commandSender->sendMessage(NULL, "Your realname have been set to: " + tmp);
+	commandSender->setUsername(args.at(1));
+	commandSender->sendMessage(NULL, "Your username has been set to: " + args.at(1));
 
-	if (commandSender->getUsername() != "" && commandSender->getNickname() != "")
+	std::string real_name = args.at(4);
+	for (size_t i = 5; i < args.size(); i++)
+		real_name.append(" ").append(args.at(i));
+	real_name.erase(real_name.begin());
+	commandSender->setRealName(real_name);
+	commandSender->sendMessage(NULL, "Your realname has been set to: " + real_name);
+
+	if (!commandSender->getNickname().empty() && !commandSender->getUsername().empty())
 	{
 		commandSender->setAuthenticated(true);
 		commandSender->sendMessage(NULL, "Your are now authenticated.");
 	}
-
 	return true;
 }
