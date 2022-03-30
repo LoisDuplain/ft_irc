@@ -68,7 +68,10 @@ bool	JoinCommand::execute(User *commandSender, std::vector<std::string> args)
 		{
 			ch->addUser(commandSender);
 			commandSender->addChannel(ch);
-			commandSender->sendMessage(NULL, "You have joined the channel: " + channels.at(i));
+			std::string tmp = ch->getName();
+			tmp.append(" :");
+			tmp.append(ch->getTopic());
+			commandSender->sendMessage(NULL, tmp);
 		}
 		i++;
 	}

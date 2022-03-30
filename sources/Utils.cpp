@@ -1,6 +1,6 @@
 #include "Utils.hpp"
 
-#define BAD_CARACTERS "{}|[]\\"
+#define BAD_CHARACTERS "{}|[]\\"
 
 std::vector<std::string>	tokenizeCommand(std::string commandLine)
 {
@@ -23,9 +23,9 @@ bool checkBadCharacters(std::string s)
 	while (i < s.size())
 	{
 		j = 0;
-		while (BAD_CARACTERS[j++])
+		while (BAD_CHARACTERS[j++])
 		{
-			if (s[i] == BAD_CARACTERS[j])
+			if (s[i] == BAD_CHARACTERS[j])
 				return true;
 		}
 		i++;
