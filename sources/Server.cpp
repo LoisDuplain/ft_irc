@@ -97,7 +97,10 @@ void	Server::readSocket(int socket)
 		disconnectUser(user);
 		return;
 	}
-	buff[readed_bytes - 1] = '\0';
+	if (buff[readed_bytes - 1] == '\n')
+		buff[readed_bytes - 1] = '\0';
+	if (buff[readed_bytes - 2] == '\r')
+		buff[readed_bytes - 2] = '\0';
 	if (strlen(buff) == 0)
 		return;
 	std::cout << *user << ": " << buff << std::endl;
@@ -127,7 +130,7 @@ void	Server::executeCommand(User *commandSender, std::vector<std::string> args)
 	ACommand *command = _commandManager.getCommand(args.at(0));
 	if (command == NULL)
 	{
-		commandSender->sendMessage(NULL, "Unknown command");
+		commandSender->sendMessage(NULL, "Unknown command: " + args.at(0));
 		return;
 	}
 
