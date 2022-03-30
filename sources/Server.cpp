@@ -53,6 +53,14 @@ void	Server::start(void)
 	FD_SET(_master_socket, &_master_fds);
 	_max_fd = _master_socket;
 
+	createChannel("t1", "", false, 10);
+	createChannel("t2", "oui", false, 10);
+	createChannel("t3", "", true, 10);
+	createChannel("t4", "", false, 0);
+	createChannel("t5", "non", true, 10);
+	createChannel("t6", "moi", true, 0);
+	createChannel("t7", "moi", false, 10);
+
 	registerCommands();
 }
 void	Server::loop(void)
@@ -121,6 +129,8 @@ void	Server::registerCommands(void)
 {
 	_commandManager.registerCommand(new PassCommand(this));
 	_commandManager.registerCommand(new NickCommand(this));
+	_commandManager.registerCommand(new UserCommand(this));
+	_commandManager.registerCommand(new JoinCommand(this));
 }
 void	Server::executeCommand(User *commandSender, std::vector<std::string> args)
 {
@@ -180,11 +190,11 @@ User	*Server::getUser(int socket)
 }
 
 /* Channel */
-bool	Server::createChannel(std::string name)
+bool	Server::createChannel(std::string name, std::string password, bool isInviteOnly, size_t max_size)
 {
 	if (name.empty() || _channels.count(name) >= 1)
 		return false;
-	_channels.insert(std::make_pair(name, new Channel(name)));
+	_channels.insert(std::make_pair(name, new Channel(name, password, isInviteOnly, max_size)));
 	return true;
 }
 bool	Server::removeChannel(std::string name)

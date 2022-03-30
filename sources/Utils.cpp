@@ -12,3 +12,21 @@ std::vector<std::string>	tokenizeCommand(std::string commandLine)
 	}
 	return args;
 }
+
+bool checkBadCharacters(std::string s)
+{
+	size_t i = 0;
+	size_t j = 0;
+
+	while (i < s.size())
+	{
+		j = 0;
+		while (BAD_CARACTERS[j++])
+		{
+			if (s[i] == BAD_CARACTERS[j])
+				return true;
+		}
+		i++;
+	}
+	return false;
+}

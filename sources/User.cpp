@@ -26,8 +26,8 @@ void	User::sendMessage(User *from, std::string message)	const
 {
 	std::string	new_message;
 
-	if (_nickname.empty())
-		return;
+	//if (_nickname.empty())
+	//	return;
 
 	if (from != NULL)
 		new_message.append(from->getNickname()).append(": ");
@@ -69,9 +69,9 @@ bool				User::isOp(void)			const
 {
 	return this->_op;
 }
-Channel				*User::getChannel(void)		const
+std::map<std::string, Channel *> User::getChannels(void)		const
 {
-	return this->_channel;
+	return this->_channels;
 }
 
 /* Setter */
@@ -99,15 +99,11 @@ void				User::setOp(bool state)
 {
 	this->_op = state;
 }
-bool				User::setChannel(Channel *channel)
+bool				User::addChannel(Channel *channel)
 {
-	if (channel == NULL || channel == _channel)
+	if (channel == NULL || _channels.count(channel->getName()) >= 1)
 		return false;
-	if (_channel != NULL && !_channel->removeUser(this))
-		return false;
-	_channel = channel;
-	if (!_channel->addUser(this))
-		return false;
+	_channels.insert(std::make_pair(channel->getName(), channel));
 	return true;
 }
 

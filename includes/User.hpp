@@ -24,7 +24,7 @@ private:
 
 	bool		_op;
 
-	Channel		*_channel;
+	std::map<std::string, Channel *>	_channels;
 public:
 	User(void);
 	User(int socket);
@@ -42,7 +42,7 @@ public:
 	bool				isConnected(void)		const;
 	bool				isAuthenticated(void)	const;
 	bool				isOp(void)				const;
-	Channel				*getChannel(void)		const;
+	std::map<std::string, Channel *> getChannels(void)		const;
 
 	/* Setter */
 	void				setNickname(std::string nickname);
@@ -51,7 +51,7 @@ public:
 	void				setConnected(bool state);
 	void				setAuthenticated(bool state);
 	void				setOp(bool state);
-	bool				setChannel(Channel *channel);
+	bool				addChannel(Channel *channel);
 };
 
 std::ostream	&operator<<(std::ostream &ostream, User const &o);
