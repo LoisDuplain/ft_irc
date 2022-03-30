@@ -1,5 +1,7 @@
 #include "Utils.hpp"
 
+#define BAD_CARACTERS "{}|[]\\"
+
 std::vector<std::string>	tokenizeCommand(std::string commandLine)
 {
 	std::vector<std::string> args;
