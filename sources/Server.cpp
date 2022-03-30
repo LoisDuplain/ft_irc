@@ -144,8 +144,7 @@ void	Server::executeCommand(User *commandSender, std::vector<std::string> args)
 		return;
 	}
 
-	if (!command->preExecute(commandSender, args))
-		commandSender->sendMessage(NULL, "Command not well executed.");
+	command->preExecute(commandSender, args);
 }
 
 /* User */
