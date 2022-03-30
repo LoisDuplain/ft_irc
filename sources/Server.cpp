@@ -131,6 +131,7 @@ void	Server::registerCommands(void)
 	_commandManager.registerCommand(new NickCommand(this));
 	_commandManager.registerCommand(new UserCommand(this));
 	_commandManager.registerCommand(new JoinCommand(this));
+	_commandManager.registerCommand(new PrivMsgCommand(this));
 }
 void	Server::executeCommand(User *commandSender, std::vector<std::string> args)
 {

@@ -19,6 +19,7 @@
 #include "commands/NickCommand.hpp"
 #include "commands/UserCommand.hpp"
 #include "commands/JoinCommand.hpp"
+#include "commands/PrivMsgCommand.hpp"
 
 class Server
 {

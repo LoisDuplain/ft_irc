@@ -26,13 +26,11 @@ void	User::sendMessage(User *from, std::string message)	const
 {
 	std::string	new_message;
 
-	//if (_nickname.empty())
-	//	return;
-
+	new_message.append(":");
 	if (from != NULL)
-		new_message.append(from->getNickname()).append(": ");
+		new_message.append(from->getNickname()).append(" PRIVMSG ");
 	else
-		new_message.append(":SERVER NOTICE ");
+		new_message.append("SERVER NOTICE ");
 	
 	if (_nickname.empty())
 		new_message.append("*");
