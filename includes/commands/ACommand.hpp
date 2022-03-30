@@ -2,7 +2,6 @@
 
 #include <string>
 #include <vector>
-#include "Errors.hpp"
 
 class Server;
 class User;
