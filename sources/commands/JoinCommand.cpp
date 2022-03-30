@@ -35,20 +35,19 @@ bool	JoinCommand::execute(User *commandSender, std::vector<std::string> args)
 		return false;
 	}
     
-	try
-	{
-		channels = parseArg(args.at(1));
-		keys = parseArg(args.at(2));
-	}
-	catch(const std::exception& e)
-	{
-	}
-	
-
+	channels = parseArg(args.at(1));
 	if (channels.size() > 2)
 	{
 		commandSender->sendMessage(NULL, "Too many channels specified");
 		return false;
+	}
+
+	try
+	{
+		keys = parseArg(args.at(2));
+	}
+	catch(const std::exception& e)
+	{
 	}
 
 	while (i < channels.size())
@@ -62,7 +61,8 @@ bool	JoinCommand::execute(User *commandSender, std::vector<std::string> args)
 			commandSender->sendMessage(NULL, "You must be invited to join this channel");
 		else if (ch->getUsers().size() == ch->getMaxSize())
 			commandSender->sendMessage(NULL, "The target channel is full");
-		else if ((keys.size() > 0 && ch->getPassword() != keys.at(i)) || (keys.size() == 0 && ch->getPassword() != ""))
+		else if ((keys.size() > 0 && ch->getPassword() != keys.at(i))
+		|| (keys.size() == 0 && ch->getPassword() != ""))
 			commandSender->sendMessage(NULL, "Wrong channel key");
 		else if (ch->getUser(commandSender->getNickname()) == NULL)
 		{
