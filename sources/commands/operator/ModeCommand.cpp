@@ -13,6 +13,9 @@ bool	ModeCommand::modeOp(Channel *ch, User *commandSender, std::vector<std::stri
 	args.at(2).erase(args.at(2).begin());
 	std::vector<char> flags;
 
+	(void)ch;
+	(void)sign;
+
 	for (size_t i = 0; args.at(2)[i]; i++)
 		flags.push_back(args.at(2)[i]);
 	
