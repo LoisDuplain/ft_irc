@@ -22,6 +22,7 @@
 #include "commands/operator/TopicCommand.hpp"
 #include "commands/operator/KickCommand.hpp"
 #include "commands/operator/ModeCommand.hpp"
+#include "commands/PrivMsgCommand.hpp"
 
 class Server
 {
