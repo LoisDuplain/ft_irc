@@ -42,8 +42,8 @@ public:
 	const	std::string				getPassword()	const;
 	std::map<std::string, User *>	&getUsers();
 	std::map<std::string, User *>	&getBanUsers();
-	bool					isInviteOnly()	const;
-	size_t					getMaxSize()	const;
+	bool							isInviteOnly()	const;
+	size_t							getMaxSize()	const;
 
 	/* Setters */
 	void							setPassword(std::string pass);
