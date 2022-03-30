@@ -12,6 +12,7 @@ class Channel
 private:
 	std::string						_name;
 	std::string 					_password;
+	std::string						_topic;
 	std::map<std::string, User *>	_users;
 	std::map<std::string, User *>	_ban_users;
 	bool							_isInviteOnly;
@@ -40,6 +41,7 @@ public:
 	/* Getters */
 	const	std::string				getName()		const;
 	const	std::string				getPassword()	const;
+	const	std::string				getTopic()		const;
 	std::map<std::string, User *>	&getUsers();
 	std::map<std::string, User *>	&getBanUsers();
 	bool							isInviteOnly()	const;
@@ -47,5 +49,6 @@ public:
 
 	/* Setters */
 	void							setPassword(std::string pass);
+	void							setTopic(std::string topic);
 
 };

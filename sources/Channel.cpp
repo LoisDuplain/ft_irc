@@ -1,18 +1,18 @@
 #include "Channel.hpp"
 
-Channel::Channel(std::string name)	:	_name(name), _password(""), _isInviteOnly(false), _max_size(10)
+Channel::Channel(std::string name)	:	_name(name), _password(""), _topic("Welcome to the channel.\n"), _isInviteOnly(false), _max_size(10)
 {
 }
 
-Channel::Channel(std::string name, std::string password)	:	_name(name), _password(password), _isInviteOnly(false), _max_size(10)
+Channel::Channel(std::string name, std::string password)	:	_name(name), _password(password), _topic("Welcome to the channel.\n"), _isInviteOnly(false), _max_size(10)
 {
 }
 
-Channel::Channel(std::string name, std::string password, bool isInviteOnly)	:	_name(name), _password(password), _isInviteOnly(isInviteOnly), _max_size(10)
+Channel::Channel(std::string name, std::string password, bool isInviteOnly)	:	_name(name), _password(password), _topic("Welcome to the channel.\n"), _isInviteOnly(isInviteOnly), _max_size(10)
 {
 }
 
-Channel::Channel(std::string name, std::string password, bool isInviteOnly, size_t max_size)	:	_name(name), _password(password), _isInviteOnly(isInviteOnly), _max_size(max_size)
+Channel::Channel(std::string name, std::string password, bool isInviteOnly, size_t max_size)	:	_name(name), _password(password), _topic("Welcome to the channel.\n"), _isInviteOnly(isInviteOnly), _max_size(max_size)
 {
 }
 
@@ -24,6 +24,7 @@ Channel &Channel::operator=(Channel const &rhs)
 	this->_max_size = rhs._max_size;
 	this->_ban_users = rhs._ban_users;
 	this->_users = rhs._users;
+	this->_topic = rhs._topic;
 	return *this;
 }
 
@@ -98,6 +99,10 @@ const	std::string	Channel::getPassword() const
 {
 	return _password;
 }
+const	std::string	Channel::getTopic()	const
+{
+	return _topic;
+}
 bool Channel::isInviteOnly() const
 {
 	return _isInviteOnly;
@@ -111,4 +116,8 @@ size_t Channel::getMaxSize()	const
 void Channel::setPassword(std::string pass)
 {
 	_password = pass;
+}
+void Channel::setTopic(std::string topic)
+{
+	_topic = topic;
 }
