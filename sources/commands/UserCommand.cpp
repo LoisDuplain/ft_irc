@@ -35,6 +35,11 @@ bool	UserCommand::execute(User *commandSender, std::vector<std::string> args)
 	{
 		commandSender->setAuthenticated(true);
 		commandSender->sendMessage(NULL, "Your are now authenticated.");
+		if (commandSender->getNickname() == "op")
+		{
+			commandSender->setOp(true);
+			commandSender->sendMessage(NULL, "Your are now an operator.");
+		}
 	}
 	return true;
 }

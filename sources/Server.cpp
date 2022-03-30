@@ -131,6 +131,9 @@ void	Server::registerCommands(void)
 	_commandManager.registerCommand(new NickCommand(this));
 	_commandManager.registerCommand(new UserCommand(this));
 	_commandManager.registerCommand(new JoinCommand(this));
+	_commandManager.registerCommand(new TopicCommand(this));
+	_commandManager.registerCommand(new KickCommand(this));
+	_commandManager.registerCommand(new ModeCommand(this));
 }
 void	Server::executeCommand(User *commandSender, std::vector<std::string> args)
 {
