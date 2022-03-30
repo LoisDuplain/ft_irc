@@ -33,10 +33,15 @@ void	User::sendMessage(User *from, std::string message)	const
 		new_message.append(from->getNickname()).append(": ");
 	else
 		new_message.append(":SERVER NOTICE ");
-	new_message.append(_nickname);
+	
+	if (_nickname.empty())
+		new_message.append("*");
+	else
+		new_message.append(_nickname);
+	
 	new_message.append(" :");
 	new_message.append(message);
-	new_message.append("\n\0");
+	new_message.append("\r\n\0");
 	send(_socket, new_message.c_str(), new_message.size(), 0);
 }
 
