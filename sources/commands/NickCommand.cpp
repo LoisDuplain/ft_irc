@@ -15,7 +15,7 @@ bool	NickCommand::execute(User *commandSender, std::vector<std::string> args)
 		return false;
 	}
 	
-	if (commandSender->getNickname() != "" && getServer()->getUser(args.at(1)) != NULL)
+	if (getServer()->getUser(args.at(1)) != NULL)
 	{
 		commandSender->sendMessage(NULL, "Nickname already in use");
 		return false;
