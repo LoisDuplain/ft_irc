@@ -47,6 +47,13 @@ bool	Channel::addBanUser(User *user)
 	_ban_users.insert(std::make_pair(user->getNickname(), user));
 	return true;
 }
+bool	Channel::addInvitedUser(User *user)
+{
+	if (user == NULL || _invited_users.find(user->getNickname()) != _invited_users.end())
+		return false;
+	_invited_users.insert(std::make_pair(user->getNickname(), user));
+	return true;
+}
 
 bool	Channel::removeUser(User *user)
 {
@@ -60,6 +67,12 @@ bool	Channel::removeBanUser(User *user)
 		return false;
 	return _ban_users.erase(user->getNickname());
 }
+bool	Channel::removeInvitedUser(User *user)
+{
+	if (user == NULL || _invited_users.find(user->getNickname()) == _invited_users.end())
+		return false;
+	return _invited_users.erase(user->getNickname());
+}
 
 User	*Channel::getUser(std::string nickname)
 {
@@ -68,6 +81,10 @@ User	*Channel::getUser(std::string nickname)
 User	*Channel::getBanUser(std::string nickname)
 {
 	return _ban_users.find(nickname)->second;
+}
+User	*Channel::getInvitedUser(std::string nickname)
+{
+	return _invited_users.find(nickname)->second;
 }
 
 /* Messaging */
@@ -90,6 +107,10 @@ std::map<std::string, User*> &Channel::getUsers()
 std::map<std::string, User*> &Channel::getBanUsers()
 {
 	return _ban_users;
+}
+std::map<std::string, User *>	&Channel::getInvitedUsers()
+{
+	return _invited_users;
 }
 const	std::string	Channel::getName() const
 {
@@ -120,4 +141,14 @@ void Channel::setPassword(std::string pass)
 void Channel::setTopic(std::string topic)
 {
 	_topic = topic;
+}
+
+void Channel::setInviteOnly(bool b)
+{
+	_isInviteOnly = b;
+}
+
+void Channel::setMaxSize(size_t n)
+{
+	_max_size = n;
 }

@@ -9,71 +9,124 @@ ModeCommand::~ModeCommand(void)
 
 bool	ModeCommand::modeOp(Channel *ch, User *commandSender, std::vector<std::string> args)
 {
-	char	sign = args.at(2)[0];
-	args.at(2).erase(args.at(2).begin());
+	char	sign;
 	std::vector<char> flags;
 
-	(void)ch;
-	(void)sign;
 
-	for (size_t i = 0; args.at(2)[i]; i++)
-		flags.push_back(args.at(2)[i]);
-	
-	for (size_t i = 0; i < flags.size(); i++)
+	for (size_t i = 2; i < args.size(); i++)
 	{
-		if (flags.at(i) == 'o')
-		{
+		sign = args.at(i)[0];
+		args.at(i).erase(args.at(i).begin());
 
-		}
-		else if (flags.at(i) == 'p')
-		{
-
-		}
-		else if (flags.at(i) == 's')
-		{
-
-		}
-		else if (flags.at(i) == 'i')
-		{
-
-		}
-		else if (flags.at(i) == 't')
-		{
-
-		}
-		else if (flags.at(i) == 'n')
-		{
-
-		}
-		else if (flags.at(i) == 'm')
-		{
-
-		}
-		else if (flags.at(i) == 'l')
-		{
-
-		}
-		else if (flags.at(i) == 'b')
-		{
-
-		}
-		else if (flags.at(i) == 'v')
-		{
-
-		}
-		else if (flags.at(i) == 'k')
-		{
-
-		}
-		else
-		{
-			std::string tmp = "Flag invalid :";
-			tmp.append(&flags.at(i)).append(".");
-			commandSender->sendMessage(NULL, tmp);
+		if (sign != '+' && sign != '-')
 			return false;
+		
+		flags.clear();
+		for (size_t j = 0; args.at(i)[j]; j++)
+			flags.push_back(args.at(i)[j]);
+		
+		for (size_t j = 0; j < flags.size(); j++)
+		{
+			User *usr;
+			if (flags.at(j) == 'o')
+			{
+				try
+				{
+					usr = ch->getUser(args.at(++i));
+				}
+				catch(const std::exception& e)
+				{
+					commandSender->sendMessage(NULL,  "Not enought parameter");
+					return false;
+				}
+				
+				if (usr == NULL)
+					commandSender->sendMessage(NULL,  "User not found");
+				else
+				{
+					if (sign == '+')
+						usr->setOp(true);
+					else
+						usr->setOp(false);
+					commandSender->sendMessage(NULL,  "Operator attribute was changed");
+				}
+			}
+			else if (flags.at(j) == 'p')
+			{
+				
+			}
+			else if (flags.at(j) == 's')
+			{
+
+			}
+			else if (flags.at(j) == 'i')
+			{
+				if (sign == '+')
+					ch->setInviteOnly(true);
+				else
+					ch->setInviteOnly(false);
+			}
+			else if (flags.at(j) == 't')
+			{
+				try
+				{
+					ch->setTopic(args.at(++i));
+				}
+				catch(const std::exception& e)
+				{
+					commandSender->sendMessage(NULL,  "Not enought parameter");
+					return false;
+				}
+			}
+			else if (flags.at(j) == 'n')
+			{
+
+			}
+			else if (flags.at(j) == 'm')
+			{
+
+			}
+			else if (flags.at(j) == 'l')
+			{
+				try
+				{
+					ch->setMaxSize(atoi(args.at(++i).c_str()));
+				}
+				catch(const std::exception& e)
+				{
+					commandSender->sendMessage(NULL,  "Not enought parameter");
+					return false;
+				}
+			}
+			else if (flags.at(j) == 'b')
+			{
+
+			}
+			else if (flags.at(j) == 'v')
+			{
+
+			}
+			else if (flags.at(j) == 'k')
+			{
+				try
+				{
+					ch->setPassword(args.at(++i));
+				}
+				catch(const std::exception& e)
+				{
+					commandSender->sendMessage(NULL,  "Not enought parameter");
+					return false;
+				}
+			}
+			else
+			{
+				std::string tmp = "Flag invalid :";
+				tmp.append(&flags.at(j)).append(".");
+				commandSender->sendMessage(NULL, tmp);
+				return false;
+			}
 		}
 	}
-	
 	return true;
 }
 

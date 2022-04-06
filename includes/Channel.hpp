@@ -15,6 +15,7 @@ private:
 	std::string						_topic;
 	std::map<std::string, User *>	_users;
 	std::map<std::string, User *>	_ban_users;
+	std::map<std::string, User *>	_invited_users;
 	bool							_isInviteOnly;
 	size_t							_max_size;
 
@@ -35,6 +36,10 @@ public:
 	bool	removeBanUser(User *user);
 	User	*getBanUser(std::string name);
 
+	bool	addInvitedUser(User *user);
+	bool	removeInvitedUser(User *user);
+	User	*getInvitedUser(std::string name);
+
 	/* Messaging */
 	void	sendMessage(User *from, std::string message);
 
@@ -44,11 +49,14 @@ public:
 	const	std::string				getTopic()		const;
 	std::map<std::string, User *>	&getUsers();
 	std::map<std::string, User *>	&getBanUsers();
+	std::map<std::string, User *>	&getInvitedUsers();
 	bool							isInviteOnly()	const;
 	size_t							getMaxSize()	const;
 
 	/* Setters */
 	void							setPassword(std::string pass);
 	void							setTopic(std::string topic);
+	void							setMaxSize(size_t n);
+	void							setInviteOnly(bool b);
 
 };
