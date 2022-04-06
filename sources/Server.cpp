@@ -173,6 +173,16 @@ bool	Server::createUser(int user_socket)
 void	Server::disconnectUser(User *user)
 {
 	std::cout << "[-] User " << *user << " disconnected." << std::endl;
+	if (_channels.size() > 0)
+	{
+		std::map<std::string, Channel *>::iterator it = _channels.begin();
+		for ( ; it != _channels.end(); it++)
+		{
+			it->second->removeUser(user);
+			it->second->removeBanUser(user);
+			it->second->removeInvitedUser(user);
+		}
+	}
 	_users.erase(user->getSocket());
 	FD_CLR(user->getSocket(), &_master_fds);
 	close(user->getSocket());

@@ -94,7 +94,8 @@ void	Channel::sendMessage(User *from, std::string message)
 	for (it = _users.begin(); it != _users.end(); it++)
 	{
 		User *to = it->second;
-		to->sendMessage(from, message);
+		if (to != from)
+			to->sendMessage(from, message);
 	}
 }
 
