@@ -134,6 +134,7 @@ void	Server::registerCommands(void)
 	_commandManager.registerCommand(new TopicCommand(this));
 	_commandManager.registerCommand(new KickCommand(this));
 	_commandManager.registerCommand(new ModeCommand(this));
+	_commandManager.registerCommand(new InviteCommand(this));
 	_commandManager.registerCommand(new PrivMsgCommand(this));
 }
 void	Server::executeCommand(User *commandSender, std::vector<std::string> args)

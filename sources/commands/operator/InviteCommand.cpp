@@ -1,6 +1,6 @@
 #include "commands/operator/InviteCommand.hpp"
 
-InviteCommand::InviteCommand(Server *server)	:	ACommand(server, "TOPIC", true, true, true)
+InviteCommand::InviteCommand(Server *server)	:	ACommand(server, "INVITE", true, true, true)
 {
 }
 InviteCommand::~InviteCommand(void)
@@ -31,18 +31,34 @@ bool	InviteCommand::execute(User *commandSender, std::vector<std::string> args)
 		return false;
 	}
 
-	if (ch->getBanUser(usr->getNickname()) != NULL)
+	if (ch->getBanUser(usr->getNickname()) == usr)
 	{
 		commandSender->sendMessage(NULL, "User was banned from this channel");
+		return false;
+	}
+
+	if (!ch->isInviteOnly())
+	{
+		commandSender->sendMessage(NULL, "This chanel is not invitation only");
+		return false;
+	}
+
+	if (ch->getInvitedUser(usr->getNickname()) == usr)
+	{
+		commandSender->sendMessage(NULL, "User already invited");
 		return false;
 	}
 
 	ch->addInvitedUser(usr);
 
 	std::string tmp = commandSender->getNickname();
-	tmp.append(" change channel topic to :");
-	tmp.append(ch->getTopic());
+	tmp.append(" invite you to the channel :");
+	tmp.append(ch->getName());
 	tmp.append("\n");
-	ch->sendMessage(NULL, tmp);
+	usr->sendMessage(NULL, tmp);
+	tmp.clear();
+	tmp = "User was invited to the channel :";
+	tmp.append(ch->getName()).append("\n");
+	commandSender->sendMessage(NULL, tmp);
 	return true;
 }

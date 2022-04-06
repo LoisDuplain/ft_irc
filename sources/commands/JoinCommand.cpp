@@ -39,22 +39,26 @@ bool	JoinCommand::execute(User *commandSender, std::vector<std::string> args)
 		Channel *ch = getServer()->getChannel(channels.at(i));
 		if (ch == NULL)
 			commandSender->sendMessage(NULL, "Channel not found");
+		else if (ch->getUser(commandSender->getNickname()) == commandSender)
+			commandSender->sendMessage(NULL, "You are already in this channel");
 		else if (ch->getBanUser(commandSender->getNickname()) == commandSender)
 			commandSender->sendMessage(NULL, "You are banned from this channel");
-		else if (ch->isInviteOnly())
+		else if (ch->getInvitedUser(commandSender->getNickname()) != commandSender && ch->isInviteOnly())
 			commandSender->sendMessage(NULL, "You must be invited to join this channel");
 		else if (ch->getUsers().size() == ch->getMaxSize())
 			commandSender->sendMessage(NULL, "The target channel is full");
 		else if ((keys.size() > 0 && ch->getPassword() != keys.at(i))
 		|| (keys.size() == 0 && ch->getPassword() != ""))
 			commandSender->sendMessage(NULL, "Wrong channel key");
-		else if (ch->getUser(commandSender->getNickname()) == NULL)
+		else
 		{
 			std::string tmp = ch->getName();
 			tmp.append(" :");
 			tmp.append(ch->getTopic());
 			commandSender->sendMessage(NULL, tmp);
 			tmp.clear();
+
+			ch->removeInvitedUser(commandSender);
 
 			tmp = commandSender->getNickname();
 			tmp.append(" has joined the channel :").append(ch->getName()).append(".");
@@ -64,6 +68,5 @@ bool	JoinCommand::execute(User *commandSender, std::vector<std::string> args)
 		}
 		i++;
 	}
-
 	return true;
 }
