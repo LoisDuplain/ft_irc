@@ -9,40 +9,35 @@ PrivMsgCommand::~PrivMsgCommand(void)
 
 bool	PrivMsgCommand::execute(User *commandSender, std::vector<std::string> args)
 {
-	if (args.size() <= 2 || args.at(2)[1] == '\0' || (args.size() > 3 && args.at(2)[0] != ':'))
+	if (args.size() <= 2 || args.at(2)[1] == '\0')
 	{
 		commandSender->sendMessage(NULL, "Wrong arguments");
 		return false;
 	}
 
-	std::vector<std::string> recs = parseArg(args.at(1));
-	User *usr;
-	Channel *ch;
+	std::vector<std::string> targets = parseArg(args.at(1));
 
 	std::string message = args.at(2);
-
-	if (args.size() > 3)
-	{
-		for (size_t i = 3; i < args.size(); i++)
-			message.append(" ").append(args.at(i));
+	if (message.at(0) == ':')
 		message.erase(message.begin());
-	}
-
-	for (size_t i = 0; i < recs.size(); i++)
+	for (size_t i = 3; i < args.size(); i++)
+		message.append(" ").append(args.at(i));
+	
+	for (size_t i = 0; i < targets.size(); i++)
 	{
-		usr = getServer()->getUser(recs.at(i));
-		ch = getServer()->getChannel(recs.at(i));
-		if (usr != NULL)
-			usr->sendMessage(commandSender, message);
-		else if (ch != NULL)
+		User *targetUser = getServer()->getUser(targets.at(i));
+		Channel *targetChannel = getServer()->getChannel(targets.at(i));
+		if (targetUser != NULL)
+			targetUser->sendMessage(commandSender, message);
+		else if (targetChannel != NULL)
 		{
-			if (ch->getUser(commandSender->getNickname()) == commandSender)
-				ch->sendMessage(commandSender, message);
+			if (targetChannel->getUser(commandSender->getNickname()) == commandSender)
+				targetChannel->sendMessage(commandSender, message);
 			else
 				commandSender->sendMessage(NULL, "You are not in this channel");
 		}
 		else
-			commandSender->sendMessage(NULL, "Wrong arguments");
+			commandSender->sendMessage(NULL, std::string("Cannot find target: ") + targets.at(i));
 	}
 	return true;
 }
