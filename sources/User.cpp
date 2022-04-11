@@ -3,7 +3,7 @@
 User::User(void)	:	_socket(-1), _connected(false), _authenticated(false), _op(false)
 {
 }
-User::User(int socket)	:	_socket(socket), _connected(false), _authenticated(false), _op(false)
+User::User(int socket, std::string ip)	:	_socket(socket), _ip(ip), _connected(false), _authenticated(false), _op(false)
 {
 }
 User &User::operator=(User const &rhs)
@@ -47,6 +47,10 @@ void	User::sendMessage(User *from, std::string message)	const
 int					User::getSocket(void)		const
 {
 	return this->_socket;
+}
+std::string			User::getIp(void)			const
+{
+	return this->_ip;
 }
 const	std::string	User::getNickname(void)		const
 {

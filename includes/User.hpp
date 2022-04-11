@@ -14,6 +14,7 @@ class User
 {
 private:
 	int 		_socket;
+	std::string	_ip;
 
 	std::string	_nickname;
 	std::string	_username;
@@ -27,7 +28,7 @@ private:
 	std::map<std::string, Channel *>	_channels;
 public:
 	User(void);
-	User(int socket);
+	User(int socket, std::string ip);
 	User &operator=(User const &rhs);
 	~User();
 
@@ -36,6 +37,7 @@ public:
 
 	/* Getter */
 	int					getSocket(void)			const;
+	std::string			getIp(void)				const;
 	const	std::string	getNickname(void)		const;
 	const	std::string	getUsername(void)		const;
 	const	std::string	getRealName(void)		const;

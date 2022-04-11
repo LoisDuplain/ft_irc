@@ -9,7 +9,7 @@ PrivMsgCommand::~PrivMsgCommand(void)
 
 bool	PrivMsgCommand::execute(User *commandSender, std::vector<std::string> args)
 {
-	if (args.size() <= 2 || args.at(2)[0] != ':' || args.at(2)[1] == '\0')
+	if (args.size() <= 2 || args.at(2)[1] == '\0' || (args.size() > 3 && args.at(2)[0] != ':'))
 	{
 		commandSender->sendMessage(NULL, "Wrong arguments");
 		return false;
@@ -20,9 +20,14 @@ bool	PrivMsgCommand::execute(User *commandSender, std::vector<std::string> args)
 	Channel *ch;
 
 	std::string message = args.at(2);
-	for (size_t i = 3; i < args.size(); i++)
-		message.append(" ").append(args.at(i));
-	message.erase(message.begin());
+
+	if (args.size() > 3)
+	{
+		for (size_t i = 3; i < args.size(); i++)
+			message.append(" ").append(args.at(i));
+		message.erase(message.begin());
+	}
+
 	for (size_t i = 0; i < recs.size(); i++)
 	{
 		usr = getServer()->getUser(recs.at(i));

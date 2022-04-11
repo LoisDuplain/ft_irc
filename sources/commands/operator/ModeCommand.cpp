@@ -62,15 +62,23 @@ bool	ModeCommand::modeOp(Channel *ch, User *commandSender, std::vector<std::stri
 			else if (flags.at(j) == 'i')
 			{
 				if (sign == '+')
+				{
 					ch->setInviteOnly(true);
+					commandSender->sendMessage(NULL,  "Channel are now in invite only");
+
+				}
 				else
+				{
 					ch->setInviteOnly(false);
+					commandSender->sendMessage(NULL,  "Channel aren't now in invite only");
+				}
 			}
 			else if (flags.at(j) == 't')
 			{
 				try
 				{
 					ch->setTopic(args.at(++i));
+					commandSender->sendMessage(NULL,  "Channel topic was changed");
 				}
 				catch(const std::exception& e)
 				{
@@ -91,6 +99,7 @@ bool	ModeCommand::modeOp(Channel *ch, User *commandSender, std::vector<std::stri
 				try
 				{
 					ch->setMaxSize(atoi(args.at(++i).c_str()));
+					commandSender->sendMessage(NULL,  "Channel max size was changed");
 				}
 				catch(const std::exception& e)
 				{
@@ -111,6 +120,7 @@ bool	ModeCommand::modeOp(Channel *ch, User *commandSender, std::vector<std::stri
 				try
 				{
 					ch->setPassword(args.at(++i));
+					commandSender->sendMessage(NULL,  "Channel password was changed");
 				}
 				catch(const std::exception& e)
 				{

@@ -13,6 +13,7 @@
 #include "Utils.hpp"
 #include "User.hpp"
 #include "Channel.hpp"
+#include "ErrorCodes.hpp"
 
 #include "commands/CommandManager.hpp"
 #include "commands/PassCommand.hpp"
@@ -59,7 +60,7 @@ public:
 	void	executeCommand(User *commandSender, std::vector<std::string> args);
 
 	/* User */
-	bool	createUser(int user_socket);
+	bool	createUser(int user_socket, sockaddr_in addr);
 	void	disconnectUser(User *user);
 	User	*getUser(std::string nickname);
 	User	*getUser(int socket);
