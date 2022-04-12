@@ -22,7 +22,7 @@ Channel &Channel::operator=(Channel const &rhs)
 	this->_password = rhs._password;
 	this->_isInviteOnly = rhs._isInviteOnly;
 	this->_max_size = rhs._max_size;
-	this->_ban_users = rhs._ban_users;
+	this->_banned_users = rhs._banned_users;
 	this->_users = rhs._users;
 	this->_topic = rhs._topic;
 	return *this;
@@ -40,11 +40,11 @@ bool	Channel::addUser(User *user)
 	_users.insert(std::make_pair(user->getNickname(), user));
 	return true;
 }
-bool	Channel::addBanUser(User *user)
+bool	Channel::addBannedUser(User *user)
 {
-	if (user == NULL || _ban_users.find(user->getNickname()) != _ban_users.end())
+	if (user == NULL || _banned_users.find(user->getNickname()) != _banned_users.end())
 		return false;
-	_ban_users.insert(std::make_pair(user->getNickname(), user));
+	_banned_users.insert(std::make_pair(user->getNickname(), user));
 	return true;
 }
 bool	Channel::addInvitedUser(User *user)
@@ -61,11 +61,11 @@ bool	Channel::removeUser(User *user)
 		return false;
 	return _users.erase(user->getNickname());
 }
-bool	Channel::removeBanUser(User *user)
+bool	Channel::removeBannedUser(User *user)
 {
-	if (user == NULL || _ban_users.find(user->getNickname()) == _ban_users.end())
+	if (user == NULL || _banned_users.find(user->getNickname()) == _banned_users.end())
 		return false;
-	return _ban_users.erase(user->getNickname());
+	return _banned_users.erase(user->getNickname());
 }
 bool	Channel::removeInvitedUser(User *user)
 {
@@ -78,9 +78,9 @@ User	*Channel::getUser(std::string nickname)
 {
 	return _users.find(nickname)->second;
 }
-User	*Channel::getBanUser(std::string nickname)
+User	*Channel::getBannedUser(std::string nickname)
 {
-	return _ban_users.find(nickname)->second;
+	return _banned_users.find(nickname)->second;
 }
 User	*Channel::getInvitedUser(std::string nickname)
 {
@@ -99,15 +99,14 @@ void	Channel::sendMessage(User *from, std::string message)
 	}
 }
 
-
 /* Getters */
 std::map<std::string, User*> &Channel::getUsers()
 {
 	return _users;
 }
-std::map<std::string, User*> &Channel::getBanUsers()
+std::map<std::string, User*> &Channel::getBannedUsers()
 {
-	return _ban_users;
+	return _banned_users;
 }
 std::map<std::string, User *>	&Channel::getInvitedUsers()
 {

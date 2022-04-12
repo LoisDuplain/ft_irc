@@ -134,7 +134,7 @@ void	Server::executeCommand(User *commandSender, std::vector<std::string> args)
 	if (args.size() <= 0)
 		return;
 
-	if (args.at(0) == "PONG")
+	if (args.at(0) == "PONG" || args.at(0) == "QUIT")
 		return;
 
 	ACommand *command = _commandManager.getCommand(args.at(0));
@@ -159,7 +159,6 @@ bool	Server::createUser(int user_socket, sockaddr_in addr)
 		_max_fd = user_socket;
 	
 	std::cout << "[+] User " << *newUser << " created." << std::endl;
-	// newUser->sendMessage(NULL, "Connection to server established");
 	
 	return true;
 }
@@ -171,9 +170,10 @@ void	Server::disconnectUser(User *user)
 		std::map<std::string, Channel *>::iterator it = _channels.begin();
 		for ( ; it != _channels.end(); it++)
 		{
-			it->second->removeUser(user);
-			it->second->removeBanUser(user);
-			it->second->removeInvitedUser(user);
+			Channel *channel = it->second;
+			channel->removeUser(user);
+			channel->removeBannedUser(user);
+			channel->removeInvitedUser(user);
 		}
 	}
 	_users.erase(user->getSocket());

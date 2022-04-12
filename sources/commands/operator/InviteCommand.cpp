@@ -31,7 +31,7 @@ bool	InviteCommand::execute(User *commandSender, std::vector<std::string> args)
 		return false;
 	}
 
-	if (ch->getBanUser(usr->getNickname()) == usr)
+	if (ch->getBannedUser(usr->getNickname()) == usr)
 	{
 		commandSender->sendMessage(NULL, "User was banned from this channel");
 		return false;

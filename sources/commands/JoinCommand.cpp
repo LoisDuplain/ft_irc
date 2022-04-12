@@ -73,7 +73,7 @@ bool	JoinCommand::execute(User *commandSender, std::vector<std::string> args)
 			}
 			if (ch->getUser(commandSender->getNickname()) == commandSender)
 				return true;
-			else if (ch->getBanUser(commandSender->getNickname()) == commandSender)
+			else if (ch->getBannedUser(commandSender->getNickname()) == commandSender)
 				commandSender->sendError(ERR_BANNEDFROMCHAN, "JOIN " + ch->getName() + " :" + "You are banned from this channel");
 			else if (ch->getInvitedUser(commandSender->getNickname()) != commandSender && ch->isInviteOnly())
 				commandSender->sendError(ERR_INVITEONLYCHAN, "JOIN " + ch->getName() + " :" + "You need to be invited to join this channel");
