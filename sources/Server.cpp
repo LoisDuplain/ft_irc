@@ -159,7 +159,6 @@ bool	Server::createUser(int user_socket, sockaddr_in addr)
 		_max_fd = user_socket;
 	
 	std::cout << "[+] User " << *newUser << " created." << std::endl;
-	// newUser->sendMessage(NULL, "Connection to server established");
 	
 	return true;
 }
@@ -172,7 +171,7 @@ void	Server::disconnectUser(User *user)
 		for ( ; it != _channels.end(); it++)
 		{
 			it->second->removeUser(user);
-			it->second->removeBanUser(user);
+			it->second->removeBannedUser(user);
 			it->second->removeInvitedUser(user);
 		}
 	}

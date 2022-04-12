@@ -12,6 +12,11 @@ bool	ModeCommand::modeOp(Channel *ch, User *commandSender, std::vector<std::stri
 	char	sign;
 	std::vector<char> flags;
 
+	if (ch->getOperatorUser(commandSender->getNickname()) != commandSender)
+	{
+		commandSender->sendError(ERR_CHANOPRIVSNEEDED, "MODE " + args.at(1) + " :" + "You're not channel operator");
+		return false;
+	}
 
 	for (size_t i = 2; i < args.size(); i++)
 	{
@@ -45,9 +50,9 @@ bool	ModeCommand::modeOp(Channel *ch, User *commandSender, std::vector<std::stri
 				else
 				{
 					if (sign == '+')
-						usr->setOp(true);
+						ch->addOperatorUser(usr);
 					else
-						usr->setOp(false);
+						ch->removeOperatorUser(usr);
 					commandSender->sendMessage(NULL,  "Operator attribute was changed");
 				}
 			}

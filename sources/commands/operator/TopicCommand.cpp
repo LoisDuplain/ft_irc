@@ -24,6 +24,12 @@ bool	TopicCommand::execute(User *commandSender, std::vector<std::string> args)
 		return false;
 	}
 
+	if (ch->getOperatorUser(commandSender->getNickname()) != commandSender)
+	{
+		commandSender->sendError(ERR_CHANOPRIVSNEEDED, "TOPIC " + args.at(1) + " :" + "You're not channel operator");
+		return false;
+	}
+
 	if (args.size() == 2)
 		ch->sendMessage(NULL, ch->getTopic());
 	else
