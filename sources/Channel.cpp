@@ -1,21 +1,17 @@
 #include "Channel.hpp"
 
-Channel::Channel(std::string name)	:	_name(name), _password(""), _topic("Welcome to the channel.\n"), _isInviteOnly(false), _max_size(10)
+Channel::Channel(std::string name)	:	_name(name), _password(""), _topic("Welcome to the channel."), _isInviteOnly(false), _max_size(10)
 {
 }
-
-Channel::Channel(std::string name, std::string password)	:	_name(name), _password(password), _topic("Welcome to the channel.\n"), _isInviteOnly(false), _max_size(10)
+Channel::Channel(std::string name, std::string password)	:	_name(name), _password(password), _topic("Welcome to the channel."), _isInviteOnly(false), _max_size(10)
 {
 }
-
-Channel::Channel(std::string name, std::string password, bool isInviteOnly)	:	_name(name), _password(password), _topic("Welcome to the channel.\n"), _isInviteOnly(isInviteOnly), _max_size(10)
+Channel::Channel(std::string name, std::string password, bool isInviteOnly)	:	_name(name), _password(password), _topic("Welcome to the channel."), _isInviteOnly(isInviteOnly), _max_size(10)
 {
 }
-
-Channel::Channel(std::string name, std::string password, bool isInviteOnly, size_t max_size)	:	_name(name), _password(password), _topic("Welcome to the channel.\n"), _isInviteOnly(isInviteOnly), _max_size(max_size)
+Channel::Channel(std::string name, std::string password, bool isInviteOnly, size_t max_size)	:	_name(name), _password(password), _topic("Welcome to the channel."), _isInviteOnly(isInviteOnly), _max_size(max_size)
 {
 }
-
 Channel &Channel::operator=(Channel const &rhs)
 {
 	this->_name = rhs._name;
@@ -27,7 +23,6 @@ Channel &Channel::operator=(Channel const &rhs)
 	this->_topic = rhs._topic;
 	return *this;
 }
-
 Channel::~Channel(void)
 {
 }
@@ -38,6 +33,9 @@ bool	Channel::addUser(User *user)
 	if (user == NULL || _users.find(user->getNickname()) != _users.end())
 		return false;
 	_users.insert(std::make_pair(user->getNickname(), user));
+
+	sendPacket(":" + user->getNickname() + "!" + user->getUsername() + "@" + user->getIp() + " JOIN " + _name);
+
 	return true;
 }
 bool	Channel::addBannedUser(User *user)
@@ -104,10 +102,32 @@ User	*Channel::getOperatorUser(std::string nickname)
 	return _operator_users.find(nickname)->second;
 }
 
-/* Messaging */
-void	Channel::sendMessage(User *from, std::string message)
+void	Channel::sendRefreshedUserList(void)	const
 {
-	std::map<std::string, User *>::iterator it;
+	for (std::map<std::string, User *>::const_iterator it = _users.begin(); it != _users.end(); it++)
+	{
+		User *user = it->second;
+		user->sendSTDPacket(RPL_NAMREPLY, user->getNickname() + " = " + _name + " :" + listClients(*this));
+		user->sendSTDPacket(RPL_ENDOFNAMES, user->getNickname() + " " + _name + " :End of NAMES list");
+	}
+}
+
+/* Messaging */
+void	Channel::sendPacket(std::string packet)	const
+{
+	std::map<std::string, User *>::const_iterator it;
+	for (it = _users.begin(); it != _users.end(); it++)
+		it->second->sendPacket(packet);
+}
+void	Channel::sendSTDPacket(int code, std::string packet)	const
+{
+	std::map<std::string, User *>::const_iterator it;
+	for (it = _users.begin(); it != _users.end(); it++)
+		it->second->sendSTDPacket(code, packet);
+}
+void	Channel::sendMessage(User *from, std::string message)	const
+{
+	std::map<std::string, User *>::const_iterator it;
 	for (it = _users.begin(); it != _users.end(); it++)
 	{
 		User *to = it->second;
@@ -159,12 +179,10 @@ void Channel::setTopic(std::string topic)
 {
 	_topic = topic;
 }
-
 void Channel::setInviteOnly(bool b)
 {
 	_isInviteOnly = b;
 }
-
 void Channel::setMaxSize(size_t n)
 {
 	_max_size = n;

@@ -11,12 +11,12 @@ bool	PassCommand::execute(User *commandSender, std::vector<std::string> args)
 {
 	if (args.size() <= 1)
 	{
-		commandSender->sendError(ERR_NEEDMOREPARAMS, "PASS :Not enough parameters");
+		commandSender->sendSTDPacket(ERR_NEEDMOREPARAMS, "PASS :Not enough parameters");
 		return false;
 	}
 	if (commandSender->isConnected())
 	{
-		commandSender->sendError(ERR_ALREADYREGISTRED, "PASS :You may not reregister");
+		commandSender->sendSTDPacket(ERR_ALREADYREGISTRED, "PASS :You may not reregister");
 		return false;
 	}
 

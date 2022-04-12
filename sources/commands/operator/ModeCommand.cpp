@@ -14,7 +14,7 @@ bool	ModeCommand::modeOp(Channel *ch, User *commandSender, std::vector<std::stri
 
 	if (ch->getOperatorUser(commandSender->getNickname()) != commandSender)
 	{
-		commandSender->sendError(ERR_CHANOPRIVSNEEDED, "MODE " + args.at(1) + " :" + "You're not channel operator");
+		commandSender->sendSTDPacket(ERR_CHANOPRIVSNEEDED, "MODE " + args.at(1) + " :" + "You're not channel operator");
 		return false;
 	}
 

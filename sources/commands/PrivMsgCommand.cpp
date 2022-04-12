@@ -11,7 +11,7 @@ bool	PrivMsgCommand::execute(User *commandSender, std::vector<std::string> args)
 {
 	if (args.size() <= 2)
 	{
-		commandSender->sendError(ERR_NOTEXTTOSEND, "PRIVMSG :Please specify a text to send");
+		commandSender->sendSTDPacket(ERR_NOTEXTTOSEND, "PRIVMSG :Please specify a text to send");
 		return false;
 	}
 
@@ -23,7 +23,7 @@ bool	PrivMsgCommand::execute(User *commandSender, std::vector<std::string> args)
 
 	if (message.empty())
 	{
-		commandSender->sendError(ERR_NOTEXTTOSEND, "PRIVMSG :Please specify a text to send");
+		commandSender->sendSTDPacket(ERR_NOTEXTTOSEND, "PRIVMSG :Please specify a text to send");
 		return false;
 	}
 
@@ -40,12 +40,12 @@ bool	PrivMsgCommand::execute(User *commandSender, std::vector<std::string> args)
 			if (targetChannel != NULL && targetChannel->getUser(commandSender->getNickname()) == commandSender)
 				targetChannel->sendMessage(commandSender, message);
 			else
-				commandSender->sendError(ERR_CANNOTSENDTOCHAN, "PRIVMSG " + targets.at(i) + " :Cannot send to the channel");
+				commandSender->sendSTDPacket(ERR_CANNOTSENDTOCHAN, "PRIVMSG " + targets.at(i) + " :Cannot send to the channel");
 		}
 		else if (targetUser != NULL)
 			targetUser->sendMessage(commandSender, message);
 		else
-			commandSender->sendError(ERR_CANNOTSENDTOCHAN, "PRIVMSG " + targets.at(i) + " :Cannot find nickname");
+			commandSender->sendSTDPacket(ERR_CANNOTSENDTOCHAN, "PRIVMSG " + targets.at(i) + " :Cannot find nickname");
 	}
 	return true;
 }

@@ -32,8 +32,9 @@ public:
 	~User();
 
 	/* Messaging */
+	void	sendPacket(std::string packet)					const;
+	void	sendSTDPacket(int code, std::string packet)		const;
 	void	sendMessage(User *from, std::string message)	const;
-	void	sendError(int error, std::string message)	const;
 
 	/* Getter */
 	int					getSocket(void)			const;

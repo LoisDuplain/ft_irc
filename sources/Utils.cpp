@@ -48,3 +48,19 @@ std::vector<std::string> parseArg(std::string s)
 	res.push_back(s);
 	return res;
 }
+
+std::string	listClients(Channel channel)
+{
+	std::string result;
+	
+	std::map<std::string, User*> users = channel.getUsers();
+	for (std::map<std::string, User *>::iterator it = users.begin(); it != users.end(); it++)
+	{
+		User *user = it->second;
+		if (channel.getOperatorUser(user->getNickname()) == user)
+			result += "@";
+		result += user->getNickname() + " ";
+	}
+	result.pop_back();
+	return result;
+}

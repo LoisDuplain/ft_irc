@@ -31,7 +31,7 @@ bool	JoinCommand::execute(User *commandSender, std::vector<std::string> args)
 
 	if (args.size() <= 1 || args.at(1).empty())
 	{
-		commandSender->sendError(ERR_NEEDMOREPARAMS, "JOIN :Not enough parameters");
+		commandSender->sendSTDPacket(ERR_NEEDMOREPARAMS, "JOIN :Not enough parameters");
 		return false;
 	}
 
@@ -39,7 +39,7 @@ bool	JoinCommand::execute(User *commandSender, std::vector<std::string> args)
 	channels = parseArg(args.at(1));
 	if (channels.size() > 10)
 	{
-		commandSender->sendError(ERR_TOOMANYCHANNELS, "JOIN " + channels.at(i) + " :" + "Too many channels specified");
+		commandSender->sendSTDPacket(ERR_TOOMANYCHANNELS, "JOIN " + channels.at(i) + " :" + "Too many channels specified");
 		return false;
 	}
 
@@ -53,13 +53,13 @@ bool	JoinCommand::execute(User *commandSender, std::vector<std::string> args)
 
 	while (i < channels.size())
 	{
-		Channel *ch = getServer()->getChannel(channels.at(i));
+		Channel *channel = getServer()->getChannel(channels.at(i));
 
 		if (checkBadCharacters(channels.at(i)))
-			commandSender->sendError(ERR_ERRONEUSNICKNAME, "JOIN " + channels.at(i) + " :Bad characters");
+			commandSender->sendSTDPacket(ERR_ERRONEUSNICKNAME, "JOIN " + channels.at(i) + " :Bad characters");
 		else
 		{
-			if (ch == NULL)
+			if (channel == NULL)
 			{
 				try
 				{
@@ -69,39 +69,28 @@ bool	JoinCommand::execute(User *commandSender, std::vector<std::string> args)
 				{
 					getServer()->createChannel(channels.at(i), "", false, 10);
 				}
-				ch = getServer()->getChannel(channels.at(i));
-				ch->addOperatorUser(commandSender);
+				channel = getServer()->getChannel(channels.at(i));
+				channel->addOperatorUser(commandSender);
 			}
-			if (ch->getUser(commandSender->getNickname()) == commandSender)
+			if (channel->getUser(commandSender->getNickname()) == commandSender)
 				return true;
-			else if (ch->getBannedUser(commandSender->getNickname()) == commandSender)
-				commandSender->sendError(ERR_BANNEDFROMCHAN, "JOIN " + ch->getName() + " :" + "You are banned from this channel");
-			else if (ch->getInvitedUser(commandSender->getNickname()) != commandSender && ch->isInviteOnly())
-				commandSender->sendError(ERR_INVITEONLYCHAN, "JOIN " + ch->getName() + " :" + "You need to be invited to join this channel");
-			else if (ch->getUsers().size() == ch->getMaxSize())
-				commandSender->sendError(ERR_CHANNELISFULL, "JOIN " + ch->getName() + " :" + "Channel is full");
-			else if ((keys.size() > i && ch->getPassword() != keys.at(i))
-			|| (keys.size() == 0 && ch->getPassword() != ""))
-				commandSender->sendError(ERR_BADCHANNELKEY, "JOIN " + ch->getName() + " :" + "Bad password");
+			else if (channel->getBannedUser(commandSender->getNickname()) == commandSender)
+				commandSender->sendSTDPacket(ERR_BANNEDFROMCHAN, "JOIN " + channel->getName() + " :You are banned from this channel");
+			else if (channel->getInvitedUser(commandSender->getNickname()) != commandSender && channel->isInviteOnly())
+				commandSender->sendSTDPacket(ERR_INVITEONLYCHAN, "JOIN " + channel->getName() + " :You need to be invited to join this channel");
+			else if (channel->getUsers().size() == channel->getMaxSize())
+				commandSender->sendSTDPacket(ERR_CHANNELISFULL, "JOIN " + channel->getName() + " :Channel is full");
+			else if ((keys.size() > i && channel->getPassword() != keys.at(i))
+			|| (keys.size() == 0 && channel->getPassword() != ""))
+				commandSender->sendSTDPacket(ERR_BADCHANNELKEY, "JOIN " + channel->getName() + " :Bad password");
 			else
 			{
-				std::string msg = ":" + commandSender->getNickname() + "!" + commandSender->getUsername() + "@" + commandSender->getIp() + " JOIN " + ch->getName() + "\r\n";
-				send(commandSender->getSocket(), msg.c_str(), msg.size(), 0);
+				channel->removeInvitedUser(commandSender);
+				channel->addUser(commandSender);
+				commandSender->addChannel(channel);
 
-				commandSender->sendError(RPL_TOPIC, commandSender->getNickname() + " " + ch->getName() + " :" + ch->getTopic());
-
-				ch->removeInvitedUser(commandSender);
-				ch->addUser(commandSender);
-				commandSender->addChannel(ch);
-
-				std::map<std::string, User*> users = ch->getUsers();
-				for (std::map<std::string, User *>::iterator it = users.begin(); it != users.end(); it++)
-				{
-					User *user = it->second;
-					user->sendError(RPL_NAMREPLY, user->getNickname() + " = " + ch->getName() + " :" + listClients(ch));
-					user->sendError(RPL_ENDOFNAMES, user->getNickname() + " " + ch->getName() + " :End of NAMES list");
-				}
-				
+				commandSender->sendSTDPacket(RPL_TOPIC, commandSender->getNickname() + " " + channel->getName() + " :" + channel->getTopic());
+				channel->sendRefreshedUserList();
 			}
 		}
 		i++;

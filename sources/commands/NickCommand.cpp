@@ -16,19 +16,19 @@ bool	NickCommand::execute(User *commandSender, std::vector<std::string> args)
 		nickname.erase(nickname.begin());
 	if (args.size() <= 1 || nickname.empty())
 	{
-		commandSender->sendError(ERR_NONICKNAMEGIVEN, "NICK :Please specify a nickname");
+		commandSender->sendSTDPacket(ERR_NONICKNAMEGIVEN, "NICK :Please specify a nickname");
 		return false;
 	}
 	
 	if (getServer()->getUser(nickname) != NULL)
 	{
-		commandSender->sendError(ERR_NICKNAMEINUSE, "NICK " + nickname + " :nickname already in use");
+		commandSender->sendSTDPacket(ERR_NICKNAMEINUSE, "NICK " + nickname + " :nickname already in use");
 		return false;
 	}
 
 	if (checkBadCharacters(nickname))
 	{
-		commandSender->sendError(ERR_ERRONEUSNICKNAME, "NICK " + nickname + " :Bad characters");
+		commandSender->sendSTDPacket(ERR_ERRONEUSNICKNAME, "NICK " + nickname + " :Bad characters");
 		return false;
 	}
 

@@ -11,13 +11,13 @@ bool	UserCommand::execute(User *commandSender, std::vector<std::string> args)
 {
 	if (args.size() <= 4 || args.at(4)[1] == '\0')
 	{
-		commandSender->sendError(ERR_NEEDMOREPARAMS, "USER :Not enough parameters");
+		commandSender->sendSTDPacket(ERR_NEEDMOREPARAMS, "USER :Not enough parameters");
 		return false;
 	}
 
 	if (!commandSender->getUsername().empty())
 	{
-		commandSender->sendError(ERR_ALREADYREGISTRED, "USER :You may not reregister");
+		commandSender->sendSTDPacket(ERR_ALREADYREGISTRED, "USER :You may not reregister");
 		return false;
 	}
 	
