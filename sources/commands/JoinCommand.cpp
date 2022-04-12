@@ -15,7 +15,7 @@ std::string	listClients(Channel *channel)
 	for (std::map<std::string, User *>::iterator it = users.begin(); it != users.end(); it++)
 	{
 		User *user = it->second;
-		if (user->isOp())
+		if (channel->getOperatorUser(user->getNickname()) == user)
 			result += "@";
 		result += user->getNickname() + " ";
 	}
@@ -70,6 +70,7 @@ bool	JoinCommand::execute(User *commandSender, std::vector<std::string> args)
 					getServer()->createChannel(channels.at(i), "", false, 10);
 				}
 				ch = getServer()->getChannel(channels.at(i));
+				ch->addOperatorUser(commandSender);
 			}
 			if (ch->getUser(commandSender->getNickname()) == commandSender)
 				return true;

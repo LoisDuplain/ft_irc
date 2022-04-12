@@ -1,9 +1,9 @@
 #include "User.hpp"
 
-User::User(void)	:	_socket(-1), _connected(false), _authenticated(false), _op(false)
+User::User(void)	:	_socket(-1), _connected(false), _authenticated(false)
 {
 }
-User::User(int socket, std::string ip)	:	_socket(socket), _ip(ip), _connected(false), _authenticated(false), _op(false)
+User::User(int socket, std::string ip)	:	_socket(socket), _ip(ip), _connected(false), _authenticated(false)
 {
 }
 User &User::operator=(User const &rhs)
@@ -14,7 +14,6 @@ User &User::operator=(User const &rhs)
 	this->_real_name = rhs._real_name;
 	this->_connected = rhs._connected;
 	this->_authenticated = rhs._authenticated;
-	this->_op = rhs._op;
 	return *this;
 }
 User::~User()
@@ -81,10 +80,6 @@ bool				User::isAuthenticated(void)	const
 {
 	return this->_authenticated;
 }
-bool				User::isOp(void)			const
-{
-	return this->_op;
-}
 std::map<std::string, Channel *> User::getChannels(void)		const
 {
 	return this->_channels;
@@ -110,10 +105,6 @@ void				User::setConnected(bool state)
 void				User::setAuthenticated(bool state)
 {
 	this->_authenticated = state;
-}
-void				User::setOp(bool state)
-{
-	this->_op = state;
 }
 bool				User::addChannel(Channel *channel)
 {

@@ -45,7 +45,9 @@ bool	KickCommand::execute(User *commandSender, std::vector<std::string> args)
 		else
 		{
 			User *us = ch->getUser(users.at(i));
-			if (us == NULL)
+			if (ch->getOperatorUser(commandSender->getNickname()) != commandSender)
+				commandSender->sendError(ERR_CHANOPRIVSNEEDED, "KICK " + args.at(1) + " :" + "You're not channel operator");
+			else if (us == NULL)
 				commandSender->sendMessage(NULL,  "User not found");
 			else
 			{

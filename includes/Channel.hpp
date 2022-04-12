@@ -4,6 +4,8 @@
 #include <string>
 
 #include "User.hpp"
+#include "Utils.hpp"
+#include "ErrorCodes.hpp"
 
 class User;
 
@@ -16,6 +18,7 @@ private:
 	std::map<std::string, User *>	_users;
 	std::map<std::string, User *>	_banned_users;
 	std::map<std::string, User *>	_invited_users;
+	std::map<std::string, User *>	_operator_users;
 	bool							_isInviteOnly;
 	size_t							_max_size;
 
@@ -40,8 +43,16 @@ public:
 	bool	removeInvitedUser(User *user);
 	User	*getInvitedUser(std::string name);
 
+	bool	addOperatorUser(User *user);
+	bool	removeOperatorUser(User *user);
+	User	*getOperatorUser(std::string name);
+
+	void	sendRefreshedUserList(void)	const;
+
 	/* Messaging */
-	void	sendMessage(User *from, std::string message);
+	void	sendPacket(std::string packet)					const;
+	void	sendSTDPacket(int code, std::string packet)		const;
+	void	sendMessage(User *from, std::string message)	const;
 
 	/* Getters */
 	const	std::string				getName()		const;

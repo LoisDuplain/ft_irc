@@ -54,6 +54,13 @@ bool	Channel::addInvitedUser(User *user)
 	_invited_users.insert(std::make_pair(user->getNickname(), user));
 	return true;
 }
+bool	Channel::addOperatorUser(User *user)
+{
+	if (user == NULL || _operator_users.find(user->getNickname()) != _operator_users.end())
+		return false;
+	_operator_users.insert(std::make_pair(user->getNickname(), user));
+	return true;
+}
 
 bool	Channel::removeUser(User *user)
 {
@@ -73,6 +80,12 @@ bool	Channel::removeInvitedUser(User *user)
 		return false;
 	return _invited_users.erase(user->getNickname());
 }
+bool	Channel::removeOperatorUser(User *user)
+{
+	if (user == NULL || _operator_users.find(user->getNickname()) == _operator_users.end())
+		return false;
+	return _operator_users.erase(user->getNickname());
+}
 
 User	*Channel::getUser(std::string nickname)
 {
@@ -85,6 +98,10 @@ User	*Channel::getBannedUser(std::string nickname)
 User	*Channel::getInvitedUser(std::string nickname)
 {
 	return _invited_users.find(nickname)->second;
+}
+User	*Channel::getOperatorUser(std::string nickname)
+{
+	return _operator_users.find(nickname)->second;
 }
 
 /* Messaging */

@@ -25,6 +25,12 @@ bool	InviteCommand::execute(User *commandSender, std::vector<std::string> args)
 		return false;
 	}
 
+	if (ch->getOperatorUser(commandSender->getNickname()) != commandSender)
+	{
+		commandSender->sendError(ERR_CHANOPRIVSNEEDED, "INVITE " + args.at(1) + " :" + "You're not channel operator");
+		return false;
+	}
+
 	if (usr == NULL)
 	{
 		commandSender->sendMessage(NULL, "User not found");

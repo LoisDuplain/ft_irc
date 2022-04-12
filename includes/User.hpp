@@ -24,8 +24,6 @@ private:
 	bool		_connected;
 	bool		_authenticated;
 
-	bool		_op;
-
 	std::map<std::string, Channel *>	_channels;
 public:
 	User(void);
@@ -45,7 +43,6 @@ public:
 	const	std::string	getRealName(void)		const;
 	bool				isConnected(void)		const;
 	bool				isAuthenticated(void)	const;
-	bool				isOp(void)				const;
 	std::map<std::string, Channel *> getChannels(void)		const;
 
 	/* Setter */
@@ -54,7 +51,6 @@ public:
 	void				setRealName(std::string real_name);
 	void				setConnected(bool state);
 	void				setAuthenticated(bool state);
-	void				setOp(bool state);
 	bool				addChannel(Channel *channel);
 };
 

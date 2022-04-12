@@ -35,10 +35,6 @@ bool	NickCommand::execute(User *commandSender, std::vector<std::string> args)
 	commandSender->setNickname(nickname);
 
 	if (!commandSender->getNickname().empty() && !commandSender->getUsername().empty())
-	{
 		commandSender->setAuthenticated(true);
-		if (commandSender->getNickname() == "op")
-			commandSender->setOp(true);
-	}
 	return true;
 }

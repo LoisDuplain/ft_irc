@@ -39,11 +39,6 @@ bool	UserCommand::execute(User *commandSender, std::vector<std::string> args)
 
 		msg = ":server " + std::string(RPL_MYINFO) + " " + commandSender->getNickname() + " : ircserv 2.0\r\n";
 		send(commandSender->getSocket(), msg.c_str(), msg.size(), 0);
-
-		if (commandSender->getNickname() == "op")
-		{
-			commandSender->setOp(true);
-		}
 	}
 	return true;
 }

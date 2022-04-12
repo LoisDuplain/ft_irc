@@ -103,7 +103,7 @@ void	Server::readSocket(int socket)
 		buff[readed_bytes - 2] = '\0';
 	if (strlen(buff) == 0)
 		return;
-	std::cout << "< " << *user << ": " << buff << std::endl;
+	std::cout << "<-  (FM: \"" << user->getNickname() << "\") | " << buff << std::endl;
 	executeCommand(user, tokenizeCommand(std::string(buff)));
 }
 void	Server::stop(void)
@@ -174,6 +174,8 @@ void	Server::disconnectUser(User *user)
 			channel->removeUser(user);
 			channel->removeBannedUser(user);
 			channel->removeInvitedUser(user);
+			channel->removeOperatorUser(user);
+			channel->sendPacket(":" + user->getNickname() + " QUIT :Disconnected");
 		}
 	}
 	_users.erase(user->getSocket());
