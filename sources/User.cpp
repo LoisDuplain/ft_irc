@@ -41,6 +41,15 @@ void	User::sendMessage(User *from, std::string message)	const
 	new_message.append(message);
 	new_message.append("\r\n\0");
 	send(_socket, new_message.c_str(), new_message.size(), 0);
+	std::cout << "> " << new_message << std::endl;
+}
+
+void	User::sendError(int error, std::string message)	const
+{
+	std::string	new_message = ":server " + std::to_string(error) + " " + message + "\r\n\0";
+
+	send(_socket, new_message.c_str(), new_message.size(), 0);
+	std::cout << "> " << new_message << std::endl;
 }
 
 /* Getter */

@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <string>
+#include <sstream>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -34,6 +35,7 @@ public:
 
 	/* Messaging */
 	void	sendMessage(User *from, std::string message)	const;
+	void	sendError(int error, std::string message)	const;
 
 	/* Getter */
 	int					getSocket(void)			const;
