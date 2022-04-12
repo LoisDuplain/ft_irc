@@ -9,7 +9,7 @@ UserCommand::~UserCommand(void)
 
 bool	UserCommand::execute(User *commandSender, std::vector<std::string> args)
 {
-	if (args.size() <= 4 || args.at(4)[1] == '\0')
+	if (args.size() <= 4 || args.at(4)[0] == '\0')
 	{
 		commandSender->sendSTDPacket(ERR_NEEDMOREPARAMS, "USER :Not enough parameters");
 		return false;
@@ -30,15 +30,7 @@ bool	UserCommand::execute(User *commandSender, std::vector<std::string> args)
 		real_name.append(" ").append(args.at(i));
 	commandSender->setRealName(real_name);
 
-	if (!commandSender->getNickname().empty() && !commandSender->getUsername().empty())
-	{
-		commandSender->setAuthenticated(true);
-		std::string msg;
-		msg = ":" + commandSender->getIp() + " " + RPL_WELCOME + " " + commandSender->getNickname() + " :Welcome to our IRC server!\r\n";
-		send(commandSender->getSocket(), msg.c_str(), msg.size(), 0);
-
-		msg = ":server " + std::string(RPL_MYINFO) + " " + commandSender->getNickname() + " : ircserv 2.0\r\n";
-		send(commandSender->getSocket(), msg.c_str(), msg.size(), 0);
-	}
+	connectToServer(commandSender);
+	
 	return true;
 }

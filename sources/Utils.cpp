@@ -64,3 +64,17 @@ std::string	listClients(Channel channel)
 	result.pop_back();
 	return result;
 }
+
+void connectToServer(User *user)
+{
+	if (!user->getNickname().empty() && !user->getUsername().empty())
+	{
+		user->setAuthenticated(true);
+		std::string msg;
+		msg = ":" + user->getIp() + " " + RPL_WELCOME + " " + user->getNickname() + " :Welcome to our IRC server!\r\n";
+		send(user->getSocket(), msg.c_str(), msg.size(), 0);
+
+		msg = ":server " + std::string(RPL_MYINFO) + " " + user->getNickname() + " : ircserv 2.0\r\n";
+		send(user->getSocket(), msg.c_str(), msg.size(), 0);
+	}
+}
