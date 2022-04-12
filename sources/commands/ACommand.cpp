@@ -21,12 +21,6 @@ bool	ACommand::preExecute(User *commandSender, std::vector<std::string> args)
 		commandSender->sendMessage(NULL, "You need to be authenticated to execute that command.");
 		return false;
 	}
-	if (_needOp && !commandSender->isOp())
-	{
-		std::cout << *commandSender << " is trying to execute a command who needs to be an operator." << std::endl;
-		commandSender->sendMessage(NULL, "You need to be an operator to execute that command.");
-		return false;
-	}
 	return execute(commandSender, args);
 }
 bool	ACommand::execute(User *commandSender, std::vector<std::string> args)

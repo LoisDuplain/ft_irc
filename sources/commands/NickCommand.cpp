@@ -9,37 +9,32 @@ NickCommand::~NickCommand(void)
 
 bool	NickCommand::execute(User *commandSender, std::vector<std::string> args)
 {
-	if (args.size() <= 1 || args.at(1).empty())
+	std::string nickname;
+
+	nickname = args.at(1);
+	if (nickname.at(0) == ':')
+		nickname.erase(nickname.begin());
+	if (args.size() <= 1 || nickname.empty())
 	{
-		commandSender->sendMessage(NULL, replaceErrorArgs(ERR_NONICKNAMEGIVEN, "", ""));
+		commandSender->sendSTDPacket(ERR_NONICKNAMEGIVEN, "NICK :Please specify a nickname");
 		return false;
 	}
 	
-	if (commandSender->getNickname() != "" && getServer()->getUser(args.at(1)) != NULL)
+	if (getServer()->getUser(nickname) != NULL)
 	{
-		commandSender->sendMessage(NULL, replaceErrorArgs(ERR_NICKNAMEINUSE, args.at(1), ""));
+		commandSender->sendSTDPacket(ERR_NICKNAMEINUSE, "NICK " + nickname + " :nickname already in use");
 		return false;
 	}
 
-	if (checkBadCharacters(args.at(1)))
+	if (checkBadCharacters(nickname))
 	{
-		commandSender->sendMessage(NULL, replaceErrorArgs(ERR_ERRONEUSNICKNAME, args.at(1), ""));
+		commandSender->sendSTDPacket(ERR_ERRONEUSNICKNAME, "NICK " + nickname + " :Bad characters");
 		return false;
 	}
 
-	if (getServer()->getUser(args.at(1)) != NULL)
-	{
-		commandSender->sendMessage(NULL, replaceErrorArgs(ERR_NICKCOLLISION, args.at(1), ""));
-		return false;
-	}
+	commandSender->setNickname(nickname);
 
-	commandSender->setNickname(args.at(1));
-	commandSender->sendMessage(NULL, "Your nickname have been set to: " + args.at(1));
+	connectToServer(commandSender);
 
-	if (commandSender->getUsername() != "" && commandSender->getNickname() != "")
-	{
-		commandSender->setAuthenticated(true);
-		commandSender->sendMessage(NULL, "Your are now authenticated.");
-	}
 	return true;
 }

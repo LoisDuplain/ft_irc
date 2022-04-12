@@ -13,12 +13,18 @@
 #include "Utils.hpp"
 #include "User.hpp"
 #include "Channel.hpp"
+#include "ErrorCodes.hpp"
 
 #include "commands/CommandManager.hpp"
 #include "commands/PassCommand.hpp"
 #include "commands/NickCommand.hpp"
 #include "commands/UserCommand.hpp"
 #include "commands/JoinCommand.hpp"
+#include "commands/operator/TopicCommand.hpp"
+#include "commands/operator/KickCommand.hpp"
+#include "commands/operator/ModeCommand.hpp"
+#include "commands/operator/InviteCommand.hpp"
+#include "commands/PrivMsgCommand.hpp"
 
 class Server
 {
@@ -54,7 +60,7 @@ public:
 	void	executeCommand(User *commandSender, std::vector<std::string> args);
 
 	/* User */
-	bool	createUser(int user_socket);
+	bool	createUser(int user_socket, sockaddr_in addr);
 	void	disconnectUser(User *user);
 	User	*getUser(std::string nickname);
 	User	*getUser(int socket);

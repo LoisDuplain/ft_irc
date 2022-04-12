@@ -53,14 +53,6 @@ void	Server::start(void)
 	FD_SET(_master_socket, &_master_fds);
 	_max_fd = _master_socket;
 
-	createChannel("t1", "", false, 10);
-	createChannel("t2", "oui", false, 10);
-	createChannel("t3", "", true, 10);
-	createChannel("t4", "", false, 0);
-	createChannel("t5", "non", true, 10);
-	createChannel("t6", "moi", true, 0);
-	createChannel("t7", "moi", false, 10);
-
 	registerCommands();
 }
 void	Server::loop(void)
@@ -82,7 +74,7 @@ void	Server::loop(void)
 				if (fdi == _master_socket)
 				{
 					int user_socket = accept(_master_socket, (struct sockaddr *) &_address, (socklen_t *) &addrlen);
-					createUser(user_socket);
+					createUser(user_socket, _address);
 				}
 				else
 					readSocket(fdi);
@@ -111,7 +103,7 @@ void	Server::readSocket(int socket)
 		buff[readed_bytes - 2] = '\0';
 	if (strlen(buff) == 0)
 		return;
-	std::cout << *user << ": " << buff << std::endl;
+	std::cout << "<-  (FM: \"" << user->getNickname() << "\") | " << buff << std::endl;
 	executeCommand(user, tokenizeCommand(std::string(buff)));
 }
 void	Server::stop(void)
@@ -131,30 +123,35 @@ void	Server::registerCommands(void)
 	_commandManager.registerCommand(new NickCommand(this));
 	_commandManager.registerCommand(new UserCommand(this));
 	_commandManager.registerCommand(new JoinCommand(this));
+	_commandManager.registerCommand(new TopicCommand(this));
+	_commandManager.registerCommand(new KickCommand(this));
+	_commandManager.registerCommand(new ModeCommand(this));
+	_commandManager.registerCommand(new InviteCommand(this));
+	_commandManager.registerCommand(new PrivMsgCommand(this));
 }
 void	Server::executeCommand(User *commandSender, std::vector<std::string> args)
 {
 	if (args.size() <= 0)
 		return;
-	
+
+	if (args.at(0) == "PONG" || args.at(0) == "QUIT")
+		return;
+
 	ACommand *command = _commandManager.getCommand(args.at(0));
 	if (command == NULL)
 	{
 		commandSender->sendMessage(NULL, "Unknown command: " + args.at(0));
 		return;
 	}
-
-	if (!command->preExecute(commandSender, args))
-		commandSender->sendMessage(NULL, "Command not well executed.");
+	command->preExecute(commandSender, args);
 }
 
 /* User */
-bool	Server::createUser(int user_socket)
+bool	Server::createUser(int user_socket, sockaddr_in addr)
 {
 	if (_users.count(user_socket) >= 1)
 		return false;
-	
-	User *newUser = new User(user_socket);
+	User *newUser = new User(user_socket, inet_ntoa(addr.sin_addr));
 	_users.insert(std::make_pair(user_socket, newUser));
 	
 	FD_SET(user_socket, &_master_fds);
@@ -162,13 +159,25 @@ bool	Server::createUser(int user_socket)
 		_max_fd = user_socket;
 	
 	std::cout << "[+] User " << *newUser << " created." << std::endl;
-	newUser->sendMessage(NULL, "Connection to server established");
 	
 	return true;
 }
 void	Server::disconnectUser(User *user)
 {
 	std::cout << "[-] User " << *user << " disconnected." << std::endl;
+	if (_channels.size() > 0)
+	{
+		std::map<std::string, Channel *>::iterator it = _channels.begin();
+		for ( ; it != _channels.end(); it++)
+		{
+			Channel *channel = it->second;
+			channel->removeUser(user);
+			channel->removeBannedUser(user);
+			channel->removeInvitedUser(user);
+			channel->removeOperatorUser(user);
+			channel->sendPacket(":" + user->getNickname() + " QUIT :Disconnected");
+		}
+	}
 	_users.erase(user->getSocket());
 	FD_CLR(user->getSocket(), &_master_fds);
 	close(user->getSocket());
