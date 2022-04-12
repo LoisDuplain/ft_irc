@@ -11,12 +11,12 @@ bool	PassCommand::execute(User *commandSender, std::vector<std::string> args)
 {
 	if (args.size() <= 1)
 	{
-		commandSender->sendMessage(NULL, "Not enough parameters");
+		commandSender->sendError(ERR_NEEDMOREPARAMS, "PASS :Not enough parameters");
 		return false;
 	}
 	if (commandSender->isConnected())
 	{
-		commandSender->sendMessage(NULL, "You are already connected");
+		commandSender->sendError(ERR_ALREADYREGISTRED, "PASS :You may not reregister");
 		return false;
 	}
 
@@ -24,7 +24,6 @@ bool	PassCommand::execute(User *commandSender, std::vector<std::string> args)
 		return false;
 
 	commandSender->setConnected(true);
-	commandSender->sendMessage(NULL, "You are now connected. You can now identify yourself using the NICK and USER commands.");
 	
 	return true;
 }

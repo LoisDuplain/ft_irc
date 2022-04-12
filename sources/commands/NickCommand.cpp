@@ -9,36 +9,36 @@ NickCommand::~NickCommand(void)
 
 bool	NickCommand::execute(User *commandSender, std::vector<std::string> args)
 {
-	if (args.size() <= 1 || args.at(1).empty())
+	std::string nickname;
+
+	nickname = args.at(1);
+	if (nickname.at(0) == ':')
+		nickname.erase(nickname.begin());
+	if (args.size() <= 1 || nickname.empty())
 	{
-		commandSender->sendMessage(NULL, "Please specify a nickname");
+		commandSender->sendError(ERR_NONICKNAMEGIVEN, "NICK :Please specify a nickname");
 		return false;
 	}
 	
-	if (getServer()->getUser(args.at(1)) != NULL)
+	if (getServer()->getUser(nickname) != NULL)
 	{
-		commandSender->sendMessage(NULL, "Nickname already in use");
+		commandSender->sendError(ERR_NICKNAMEINUSE, "NICK " + nickname + " :nickname already in use");
 		return false;
 	}
 
-	if (checkBadCharacters(args.at(1)))
+	if (checkBadCharacters(nickname))
 	{
-		commandSender->sendMessage(NULL, "Bad characters");
+		commandSender->sendError(ERR_ERRONEUSNICKNAME, "NICK " + nickname + " :Bad characters");
 		return false;
 	}
 
-	commandSender->setNickname(args.at(1));
-	commandSender->sendMessage(NULL, "Your nickname has been set to: " + args.at(1));
+	commandSender->setNickname(nickname);
 
 	if (!commandSender->getNickname().empty() && !commandSender->getUsername().empty())
 	{
 		commandSender->setAuthenticated(true);
-		commandSender->sendMessage(NULL, "Your are now authenticated.");
 		if (commandSender->getNickname() == "op")
-		{
 			commandSender->setOp(true);
-			commandSender->sendMessage(NULL, "Your are now an operator.");
-		}
 	}
 	return true;
 }

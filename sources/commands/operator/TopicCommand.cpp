@@ -12,7 +12,7 @@ bool	TopicCommand::execute(User *commandSender, std::vector<std::string> args)
 
 	if (args.size() <= 1 || args.at(1).empty())
 	{
-		commandSender->sendMessage(NULL, "Not enough parameters");
+		commandSender->sendError(ERR_NEEDMOREPARAMS, "TOPIC :Not enough parameters");
 		return false;
 	}
 
@@ -20,7 +20,7 @@ bool	TopicCommand::execute(User *commandSender, std::vector<std::string> args)
 
 	if (ch == NULL)
 	{
-		commandSender->sendMessage(NULL, "Channel not found");
+		commandSender->sendError(ERR_NOTONCHANNEL, "TOPIC " + args.at(1) + " :" + "Not enough parameters");
 		return false;
 	}
 

@@ -103,7 +103,7 @@ void	Server::readSocket(int socket)
 		buff[readed_bytes - 2] = '\0';
 	if (strlen(buff) == 0)
 		return;
-	std::cout << *user << ": " << buff << std::endl;
+	std::cout << "< " << *user << ": " << buff << std::endl;
 	executeCommand(user, tokenizeCommand(std::string(buff)));
 }
 void	Server::stop(void)
@@ -159,7 +159,7 @@ bool	Server::createUser(int user_socket, sockaddr_in addr)
 		_max_fd = user_socket;
 	
 	std::cout << "[+] User " << *newUser << " created." << std::endl;
-	newUser->sendMessage(NULL, "Connection to server established");
+	// newUser->sendMessage(NULL, "Connection to server established");
 	
 	return true;
 }

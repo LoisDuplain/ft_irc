@@ -7,6 +7,22 @@ JoinCommand::~JoinCommand(void)
 {
 }
 
+std::string	listClients(Channel *channel)
+{
+	std::string result;
+	
+	std::map<std::string, User*> users = channel->getUsers();
+	for (std::map<std::string, User *>::iterator it = users.begin(); it != users.end(); it++)
+	{
+		User *user = it->second;
+		if (user->isOp())
+			result += "@";
+		result += user->getNickname() + " ";
+	}
+	result.pop_back();
+	return result;
+}
+
 bool	JoinCommand::execute(User *commandSender, std::vector<std::string> args)
 {
 	std::vector<std::string> channels;
@@ -15,15 +31,15 @@ bool	JoinCommand::execute(User *commandSender, std::vector<std::string> args)
 
 	if (args.size() <= 1 || args.at(1).empty())
 	{
-		commandSender->sendMessage(NULL, "Not enough parameters");
+		commandSender->sendError(ERR_NEEDMOREPARAMS, "JOIN :Not enough parameters");
 		return false;
 	}
 
 
 	channels = parseArg(args.at(1));
-	if (channels.size() > 2)
+	if (channels.size() > 10)
 	{
-		commandSender->sendMessage(NULL, "Too many channels specified");
+		commandSender->sendError(ERR_TOOMANYCHANNELS, "JOIN " + channels.at(i) + " :" + "Too many channels specified");
 		return false;
 	}
 
@@ -40,7 +56,7 @@ bool	JoinCommand::execute(User *commandSender, std::vector<std::string> args)
 		Channel *ch = getServer()->getChannel(channels.at(i));
 
 		if (checkBadCharacters(channels.at(i)))
-			commandSender->sendMessage(NULL, "Bad characters");
+			commandSender->sendError(ERR_ERRONEUSNICKNAME, "JOIN " + channels.at(i) + " :Bad characters");
 		else
 		{
 			if (ch == NULL)
@@ -56,31 +72,35 @@ bool	JoinCommand::execute(User *commandSender, std::vector<std::string> args)
 				ch = getServer()->getChannel(channels.at(i));
 			}
 			if (ch->getUser(commandSender->getNickname()) == commandSender)
-				commandSender->sendMessage(NULL, "You are already in this channel");
+				return true;
 			else if (ch->getBanUser(commandSender->getNickname()) == commandSender)
-				commandSender->sendMessage(NULL, "You are banned from this channel");
+				commandSender->sendError(ERR_BANNEDFROMCHAN, "JOIN " + ch->getName() + " :" + "You are banned from this channel");
 			else if (ch->getInvitedUser(commandSender->getNickname()) != commandSender && ch->isInviteOnly())
-				commandSender->sendMessage(NULL, "You must be invited to join this channel");
+				commandSender->sendError(ERR_INVITEONLYCHAN, "JOIN " + ch->getName() + " :" + "You need to be invited to join this channel");
 			else if (ch->getUsers().size() == ch->getMaxSize())
-				commandSender->sendMessage(NULL, "The target channel is full");
+				commandSender->sendError(ERR_CHANNELISFULL, "JOIN " + ch->getName() + " :" + "Channel is full");
 			else if ((keys.size() > i && ch->getPassword() != keys.at(i))
 			|| (keys.size() == 0 && ch->getPassword() != ""))
-				commandSender->sendMessage(NULL, "Wrong channel key");
+				commandSender->sendError(ERR_BADCHANNELKEY, "JOIN " + ch->getName() + " :" + "Bad password");
 			else
 			{
-				std::string tmp = ch->getName();
-				tmp.append(" :");
-				tmp.append(ch->getTopic());
-				commandSender->sendMessage(NULL, tmp);
-				tmp.clear();
+				std::string msg = ":" + commandSender->getNickname() + "!" + commandSender->getUsername() + "@" + commandSender->getIp() + " JOIN " + ch->getName() + "\r\n";
+				send(commandSender->getSocket(), msg.c_str(), msg.size(), 0);
+
+				commandSender->sendError(RPL_TOPIC, commandSender->getNickname() + " " + ch->getName() + " :" + ch->getTopic());
 
 				ch->removeInvitedUser(commandSender);
-
-				tmp = commandSender->getNickname();
-				tmp.append(" has joined the channel :").append(ch->getName()).append(".");
-				ch->sendMessage(NULL, tmp);
 				ch->addUser(commandSender);
 				commandSender->addChannel(ch);
+
+				std::map<std::string, User*> users = ch->getUsers();
+				for (std::map<std::string, User *>::iterator it = users.begin(); it != users.end(); it++)
+				{
+					User *user = it->second;
+					user->sendError(RPL_NAMREPLY, user->getNickname() + " = " + ch->getName() + " :" + listClients(ch));
+					user->sendError(RPL_ENDOFNAMES, user->getNickname() + " " + ch->getName() + " :End of NAMES list");
+				}
+				
 			}
 		}
 		i++;
