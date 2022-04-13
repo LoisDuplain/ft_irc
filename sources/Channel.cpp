@@ -132,7 +132,20 @@ void	Channel::sendMessage(User *from, std::string message)	const
 	{
 		User *to = it->second;
 		if (to != from)
-			to->sendMessage(from, message);
+		{
+			std::string	new_message;
+
+			new_message.append(":");
+			if (from != NULL)
+				new_message.append(from->getNickname()).append(" PRIVMSG ");
+			else
+				new_message.append("SERVER NOTICE ");
+			
+			new_message.append(_name);
+			new_message.append(" :");
+			new_message.append(message);
+			to->sendPacket(new_message);
+		}
 	}
 }
 
