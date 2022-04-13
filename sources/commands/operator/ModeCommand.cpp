@@ -7,14 +7,14 @@ ModeCommand::~ModeCommand(void)
 {
 }
 
-bool	ModeCommand::modeOp(Channel *ch, User *commandSender, std::vector<std::string> args)
+bool	ModeCommand::modeOp(Channel *channel, User *commandSender, std::vector<std::string> args)
 {
-	char	sign;
-	std::vector<char> flags;
+	char				sign;
+	std::vector<char>	flags;
 
-	if (ch->getOperatorUser(commandSender->getNickname()) != commandSender)
+	if (channel->getOperatorUser(commandSender->getNickname()) != commandSender)
 	{
-		commandSender->sendSTDPacket(ERR_CHANOPRIVSNEEDED, "MODE " + args.at(1) + " :" + "You're not channel operator");
+		commandSender->sendSTDPacket(ERR_CHANOPRIVSNEEDED, "MODE " + args.at(1) + " :You're not a channel operator");
 		return false;
 	}
 
@@ -37,11 +37,11 @@ bool	ModeCommand::modeOp(Channel *ch, User *commandSender, std::vector<std::stri
 			{
 				try
 				{
-					usr = ch->getUser(args.at(++i));
+					usr = channel->getUser(args.at(++i));
 				}
 				catch(const std::exception& e)
 				{
-					commandSender->sendMessage(NULL,  "Not enought parameter");
+					commandSender->sendMessage(NULL,  "Not enough parameter");
 					return false;
 				}
 				
@@ -50,31 +50,23 @@ bool	ModeCommand::modeOp(Channel *ch, User *commandSender, std::vector<std::stri
 				else
 				{
 					if (sign == '+')
-						ch->addOperatorUser(usr);
+						channel->addOperatorUser(usr);
 					else
-						ch->removeOperatorUser(usr);
+						channel->removeOperatorUser(usr);
 					commandSender->sendMessage(NULL,  "Operator attribute was changed");
 				}
-			}
-			else if (flags.at(j) == 'p')
-			{
-				
-			}
-			else if (flags.at(j) == 's')
-			{
-
 			}
 			else if (flags.at(j) == 'i')
 			{
 				if (sign == '+')
 				{
-					ch->setInviteOnly(true);
+					channel->setInviteOnly(true);
 					commandSender->sendMessage(NULL,  "Channel are now in invite only");
 
 				}
 				else
 				{
-					ch->setInviteOnly(false);
+					channel->setInviteOnly(false);
 					commandSender->sendMessage(NULL,  "Channel aren't now in invite only");
 				}
 			}
@@ -82,7 +74,7 @@ bool	ModeCommand::modeOp(Channel *ch, User *commandSender, std::vector<std::stri
 			{
 				try
 				{
-					ch->setTopic(args.at(++i));
+					channel->setTopic(args.at(++i));
 					commandSender->sendMessage(NULL,  "Channel topic was changed");
 				}
 				catch(const std::exception& e)
@@ -91,19 +83,11 @@ bool	ModeCommand::modeOp(Channel *ch, User *commandSender, std::vector<std::stri
 					return false;
 				}
 			}
-			else if (flags.at(j) == 'n')
-			{
-
-			}
-			else if (flags.at(j) == 'm')
-			{
-
-			}
 			else if (flags.at(j) == 'l')
 			{
 				try
 				{
-					ch->setMaxSize(atoi(args.at(++i).c_str()));
+					channel->setMaxSize(atoi(args.at(++i).c_str()));
 					commandSender->sendMessage(NULL,  "Channel max size was changed");
 				}
 				catch(const std::exception& e)
@@ -112,24 +96,16 @@ bool	ModeCommand::modeOp(Channel *ch, User *commandSender, std::vector<std::stri
 					return false;
 				}
 			}
-			else if (flags.at(j) == 'b')
-			{
-
-			}
-			else if (flags.at(j) == 'v')
-			{
-
-			}
 			else if (flags.at(j) == 'k')
 			{
 				try
 				{
-					ch->setPassword(args.at(++i));
+					channel->setPassword(args.at(++i));
 					commandSender->sendMessage(NULL,  "Channel password was changed");
 				}
 				catch(const std::exception& e)
 				{
-					commandSender->sendMessage(NULL,  "Not enought parameter");
+					commandSender->sendMessage(NULL,  "Not enough parameter");
 					return false;
 				}
 			}
@@ -149,17 +125,16 @@ bool	ModeCommand::execute(User *commandSender, std::vector<std::string> args)
 {
 	if (args.size() <= 2 || args.at(1).empty())
 	{
-		commandSender->sendMessage(NULL, "Not enough parameters");
+		commandSender->sendSTDPacket(ERR_NEEDMOREPARAMS, "MODE :Not enough parameters");
 		return false;
 	}
 
-	Channel *ch = getServer()->getChannel(args.at(1));
-
-	if (ch == NULL)
+	Channel *channel = getServer()->getChannel(args.at(1));
+	if (channel == NULL)
 	{
-		commandSender->sendMessage(NULL, "Channel not found");
+		commandSender->sendSTDPacket(ERR_NOSUCHCHANNEL, args.at(1) + " :Channel not found");
 		return false;
 	}
 
-	return modeOp(ch, commandSender, args);
+	return modeOp(channel, commandSender, args);
 }
