@@ -53,23 +53,24 @@ bool	JoinCommand::execute(User *commandSender, std::vector<std::string> args)
 
 	while (i < channels.size())
 	{
-		Channel *channel = getServer()->getChannel(channels.at(i));
+		std::string channel_name = stringToLowerCase(channels.at(i));
+		Channel *channel = getServer()->getChannel(channel_name);
 
-		if (checkBadCharacters(channels.at(i)))
-			commandSender->sendSTDPacket(ERR_ERRONEUSNICKNAME, "JOIN " + channels.at(i) + " :Bad characters");
+		if (checkBadCharacters(channel_name))
+			commandSender->sendSTDPacket(ERR_ERRONEUSNICKNAME, "JOIN " + channel_name + " :Bad characters");
 		else
 		{
 			if (channel == NULL)
 			{
 				try
 				{
-					getServer()->createChannel(channels.at(i), keys.at(i), false, 10);
+					getServer()->createChannel(channel_name, keys.at(i), false, 10);
 				}
 				catch(const std::exception& e)
 				{
-					getServer()->createChannel(channels.at(i), "", false, 10);
+					getServer()->createChannel(channel_name, "", false, 10);
 				}
-				channel = getServer()->getChannel(channels.at(i));
+				channel = getServer()->getChannel(channel_name);
 				channel->addOperatorUser(commandSender);
 			}
 			if (channel->getUser(commandSender->getNickname()) == commandSender)

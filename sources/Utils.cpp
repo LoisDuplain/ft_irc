@@ -78,3 +78,15 @@ void connectToServer(User *user)
 		send(user->getSocket(), msg.c_str(), msg.size(), 0);
 	}
 }
+
+std::string stringToLowerCase(std::string s)
+{
+	std::string tmp = s;
+	std::string::iterator it = tmp.begin();
+	for ( ; it < tmp.end(); it++)
+	{
+		if (std::isalnum(*it))
+			*it = std::tolower(*it);		
+	}
+	return tmp;
+}
