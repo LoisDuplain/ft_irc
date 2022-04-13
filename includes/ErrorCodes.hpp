@@ -1,10 +1,10 @@
 #pragma once
 
-#define RPL_WELCOME "001"
-#define RPL_YOURHOST "2"
-#define RPL_CREATED "3"
-#define RPL_MYINFO "4"
-#define RPL_BOUNCE "5"
+#define RPL_WELCOME 1
+#define RPL_YOURHOST 2
+#define RPL_CREATED 3
+#define RPL_MYINFO 4
+#define RPL_BOUNCE 5
 
 /* Les réponses générées dans la réponse aux commandes se trouvent dans la plage de 200 à 399. */
 #define RPL_TRACELINK 200
