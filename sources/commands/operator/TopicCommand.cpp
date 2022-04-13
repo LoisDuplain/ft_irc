@@ -16,30 +16,21 @@ bool	TopicCommand::execute(User *commandSender, std::vector<std::string> args)
 		return false;
 	}
 
-	Channel *ch = getServer()->getChannel(args.at(1));
+	std::string channel_name = stringToLowerCase(args.at(1));
+	Channel *ch = getServer()->getChannel(channel_name);
 
 	if (ch == NULL)
 	{
-		commandSender->sendSTDPacket(ERR_NOTONCHANNEL, "TOPIC " + args.at(1) + " :" + "Not enough parameters");
+		commandSender->sendSTDPacket(ERR_NOTONCHANNEL, "TOPIC " + channel_name + " :" + "Channel not found");
 		return false;
 	}
 
 	if (ch->getOperatorUser(commandSender->getNickname()) != commandSender)
 	{
-		commandSender->sendSTDPacket(ERR_CHANOPRIVSNEEDED, "TOPIC " + args.at(1) + " :" + "You're not channel operator");
+		commandSender->sendSTDPacket(ERR_CHANOPRIVSNEEDED, "TOPIC " + channel_name + " :" + "You're not channel operator");
 		return false;
 	}
 
-	if (args.size() == 2)
-		ch->sendMessage(NULL, ch->getTopic());
-	else
-	{
-		ch->setTopic(args.at(2));
-		std::string tmp = commandSender->getNickname();
-		tmp.append(" change channel topic to :");
-		tmp.append(ch->getTopic());
-		tmp.append("\n");
-		ch->sendMessage(NULL, tmp);
-	}
+	ch->setTopic(args.at(2));
 	return true;
 }

@@ -29,7 +29,7 @@ bool	ModeCommand::modeOp(Channel *channel, User *commandSender, std::vector<std:
 		flags.clear();
 		for (size_t j = 0; args.at(i)[j]; j++)
 			flags.push_back(args.at(i)[j]);
-		
+
 		for (size_t j = 0; j < flags.size(); j++)
 		{
 			User *usr;
@@ -41,45 +41,36 @@ bool	ModeCommand::modeOp(Channel *channel, User *commandSender, std::vector<std:
 				}
 				catch(const std::exception& e)
 				{
-					commandSender->sendMessage(NULL,  "Not enough parameter");
+					commandSender->sendSTDPacket(ERR_NEEDMOREPARAMS, "MODE :Not enough parameters");
 					return false;
 				}
 				
 				if (usr == NULL)
-					commandSender->sendMessage(NULL,  "User not found");
+					commandSender->sendSTDPacket(ERR_NOSUCHNICK, "MODE " + args.at(i) + " :No such nick/channel");
 				else
 				{
 					if (sign == '+')
 						channel->addOperatorUser(usr);
 					else
 						channel->removeOperatorUser(usr);
-					commandSender->sendMessage(NULL,  "Operator attribute was changed");
 				}
 			}
 			else if (flags.at(j) == 'i')
 			{
 				if (sign == '+')
-				{
 					channel->setInviteOnly(true);
-					commandSender->sendMessage(NULL,  "Channel are now in invite only");
-
-				}
 				else
-				{
 					channel->setInviteOnly(false);
-					commandSender->sendMessage(NULL,  "Channel aren't now in invite only");
-				}
 			}
 			else if (flags.at(j) == 't')
 			{
 				try
 				{
 					channel->setTopic(args.at(++i));
-					commandSender->sendMessage(NULL,  "Channel topic was changed");
 				}
 				catch(const std::exception& e)
 				{
-					commandSender->sendMessage(NULL,  "Not enought parameter");
+					commandSender->sendSTDPacket(ERR_NEEDMOREPARAMS, "MODE :Not enough parameters");
 					return false;
 				}
 			}
@@ -88,11 +79,10 @@ bool	ModeCommand::modeOp(Channel *channel, User *commandSender, std::vector<std:
 				try
 				{
 					channel->setMaxSize(atoi(args.at(++i).c_str()));
-					commandSender->sendMessage(NULL,  "Channel max size was changed");
 				}
 				catch(const std::exception& e)
 				{
-					commandSender->sendMessage(NULL,  "Not enought parameter");
+					commandSender->sendSTDPacket(ERR_NEEDMOREPARAMS, "MODE :Not enough parameters");
 					return false;
 				}
 			}
@@ -101,19 +91,16 @@ bool	ModeCommand::modeOp(Channel *channel, User *commandSender, std::vector<std:
 				try
 				{
 					channel->setPassword(args.at(++i));
-					commandSender->sendMessage(NULL,  "Channel password was changed");
 				}
 				catch(const std::exception& e)
 				{
-					commandSender->sendMessage(NULL,  "Not enough parameter");
+					commandSender->sendSTDPacket(ERR_NEEDMOREPARAMS, "MODE :Not enough parameters");
 					return false;
 				}
 			}
 			else
 			{
-				std::string tmp = "Flag invalid :";
-				tmp.append(&flags.at(j)).append(".");
-				commandSender->sendMessage(NULL, tmp);
+				commandSender->sendSTDPacket(ERR_UMODEUNKNOWNFLAG, "MODE :Unknown MODE flag");
 				return false;
 			}
 		}
@@ -123,16 +110,18 @@ bool	ModeCommand::modeOp(Channel *channel, User *commandSender, std::vector<std:
 
 bool	ModeCommand::execute(User *commandSender, std::vector<std::string> args)
 {
+	if (args.size() == 2)
+		return false;
 	if (args.size() <= 2 || args.at(1).empty())
 	{
 		commandSender->sendSTDPacket(ERR_NEEDMOREPARAMS, "MODE :Not enough parameters");
 		return false;
 	}
-
-	Channel *channel = getServer()->getChannel(args.at(1));
+	std::string channel_name = stringToLowerCase(args.at(1));
+	Channel *channel = getServer()->getChannel(channel_name);
 	if (channel == NULL)
 	{
-		commandSender->sendSTDPacket(ERR_NOSUCHCHANNEL, args.at(1) + " :Channel not found");
+		commandSender->sendSTDPacket(ERR_NOSUCHCHANNEL, "MODE " + channel_name + " :Channel not found");
 		return false;
 	}
 

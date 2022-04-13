@@ -12,16 +12,21 @@ bool	InviteCommand::execute(User *commandSender, std::vector<std::string> args)
 
 	if (args.size() <= 2 || args.at(1).empty())
 	{
-		commandSender->sendMessage(NULL, "Not enough parameters");
+		commandSender->sendSTDPacket(ERR_NEEDMOREPARAMS, "INVITE :Not enough parameters");
 		return false;
 	}
 
 	User *usr = getServer()->getUser(args.at(1));
 	Channel *ch = getServer()->getChannel(args.at(2));
-
 	if (ch == NULL)
 	{
-		commandSender->sendMessage(NULL, "Channel not found");
+		commandSender->sendSTDPacket(ERR_NOSUCHCHANNEL, "INVITE " + args.at(2) + " :Channel not found");
+		return false;
+	}
+
+	if (ch->getUser(commandSender->getNickname()) != commandSender)
+	{
+		commandSender->sendSTDPacket(ERR_NOTONCHANNEL, "INVITE " + ch->getName() + " :" + "You're not on that channel");
 		return false;
 	}
 
@@ -33,38 +38,20 @@ bool	InviteCommand::execute(User *commandSender, std::vector<std::string> args)
 
 	if (usr == NULL)
 	{
-		commandSender->sendMessage(NULL, "User not found");
+		commandSender->sendSTDPacket(ERR_NOSUCHNICK, "INVITE " + args.at(1) + " :No such nick/channel");
 		return false;
 	}
 
-	if (ch->getBannedUser(usr->getNickname()) == usr)
+	if (ch->getUser(usr->getNickname()) == usr)
 	{
-		commandSender->sendMessage(NULL, "User was banned from this channel");
-		return false;
-	}
 
-	if (!ch->isInviteOnly())
-	{
-		commandSender->sendMessage(NULL, "This chanel is not invitation only");
-		return false;
-	}
-
-	if (ch->getInvitedUser(usr->getNickname()) == usr)
-	{
-		commandSender->sendMessage(NULL, "User already invited");
+		commandSender->sendSTDPacket(ERR_USERONCHANNEL, "INVITE " + usr->getNickname() + " " + ch->getName() + " :is already on channel");
 		return false;
 	}
 
 	ch->addInvitedUser(usr);
 
-	std::string tmp = commandSender->getNickname();
-	tmp.append(" invite you to the channel :");
-	tmp.append(ch->getName());
-	tmp.append("\n");
-	usr->sendMessage(NULL, tmp);
-	tmp.clear();
-	tmp = "User was invited to the channel :";
-	tmp.append(ch->getName()).append("\n");
-	commandSender->sendMessage(NULL, tmp);
+	commandSender->sendSTDPacket(RPL_INVITING, ch->getName() + " " + commandSender->getNickname() + " " + ch->getName());
+	
 	return true;
 }

@@ -12,13 +12,13 @@ bool	ACommand::preExecute(User *commandSender, std::vector<std::string> args)
 	if (_needConnected && !commandSender->isConnected())
 	{
 		std::cout << *commandSender << " is trying to execute a command who needs to be connected." << std::endl;
-		commandSender->sendMessage(NULL, "You need to be connected to execute that command.");
+		commandSender->sendSTDPacket(ERR_NOLOGIN, commandSender->getNickname() + " :" + "User not logged in");
 		return false;
 	}
 	if (_needAuthenticated && !commandSender->isAuthenticated())
 	{
 		std::cout << *commandSender << " is trying to execute a command who needs to be authenticated." << std::endl;
-		commandSender->sendMessage(NULL, "You need to be authenticated to execute that command.");
+		commandSender->sendSTDPacket(ERR_NOTREGISTERED, ":You have not registered");
 		return false;
 	}
 	return execute(commandSender, args);

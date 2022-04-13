@@ -14,9 +14,9 @@ bool	KickCommand::execute(User *commandSender, std::vector<std::string> args)
 	std::vector<std::string> users;
 	size_t i = 0;
 
-	if (args.size() <= 2 || args.at(1).empty())
+	if (args.size() <= 3 || args.at(1).empty())
 	{
-		commandSender->sendMessage(NULL, "Not enough parameters");
+		commandSender->sendSTDPacket(ERR_NEEDMOREPARAMS, "KICK :Not enough parameters");
 		return false;
 	}
 
@@ -25,7 +25,7 @@ bool	KickCommand::execute(User *commandSender, std::vector<std::string> args)
 
 	if (channels.size() != users.size())
 	{
-		commandSender->sendMessage(NULL, "Not enough parameters");
+		commandSender->sendSTDPacket(ERR_NEEDMOREPARAMS, "KICK :Not enough parameters");
 		return false;
 	}
 
@@ -36,45 +36,25 @@ bool	KickCommand::execute(User *commandSender, std::vector<std::string> args)
 		for (size_t i = 4; i < args.size(); i++)
 		reason.append(" ").append(args.at(i));
 	}
-
+	std::string channel_name;
 	while (i < channels.size())
 	{
-		Channel *ch = getServer()->getChannel(channels.at(i));
-		if (ch == NULL)
-			commandSender->sendMessage(NULL, "Channel not found");
+		channel_name = stringToLowerCase(args.at(1));
+		Channel *channel = getServer()->getChannel(channel_name);
+		if (channel == NULL)
+			commandSender->sendSTDPacket(ERR_NOSUCHCHANNEL, "KICK " + channel_name + " :Channel not found");
 		else
 		{
-			User *us = ch->getUser(users.at(i));
-			if (ch->getOperatorUser(commandSender->getNickname()) != commandSender)
-				commandSender->sendSTDPacket(ERR_CHANOPRIVSNEEDED, "KICK " + args.at(1) + " :" + "You're not channel operator");
+			User *us = channel->getUser(users.at(i));
+			if (channel->getOperatorUser(commandSender->getNickname()) != commandSender)
+				commandSender->sendSTDPacket(ERR_CHANOPRIVSNEEDED, "KICK " + channel_name + " :" + "You're not channel operator");
 			else if (us == NULL)
-				commandSender->sendMessage(NULL,  "User not found");
+				commandSender->sendSTDPacket(ERR_NOSUCHNICK, "KICK " + users.at(i) + " :No such nick/channel");
 			else
 			{
-				ch->removeUser(us);
-				us->getChannels().erase(ch->getName());
-
-				std::string tmp = "You have been kicked from the channel :";
-				tmp.append(ch->getName());
-				if (args.size() > 3)
-					tmp.append(" for reason :").append(reason);
-				else
-					tmp.append(".");
-				us->sendMessage(NULL, tmp);
-				tmp.clear();
-
-				tmp = "You have kicked user :";
-				tmp.append(us->getNickname()).append(".");
-				commandSender->sendMessage(NULL, tmp);
-				tmp.clear();
-
-				tmp = us->getNickname();
-				tmp.append(" was kicked for the channel :").append(ch->getName());
-				if (args.size() > 3)
-					tmp.append(" for reason :").append(reason);
-				else
-					tmp.append(".");
-				ch->sendMessage(NULL, tmp);
+				channel->removeUser(us);
+				us->getChannels().erase(channel->getName());
+				channel->sendRefreshedUserList();
 			}
 		}
 		i++;

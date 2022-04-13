@@ -140,7 +140,7 @@ void	Server::executeCommand(User *commandSender, std::vector<std::string> args)
 	ACommand *command = _commandManager.getCommand(args.at(0));
 	if (command == NULL)
 	{
-		commandSender->sendMessage(NULL, "Unknown command: " + args.at(0));
+		commandSender->sendSTDPacket(ERR_UNKNOWNCOMMAND, args.at(0) + " :" + "Unknown command");
 		return;
 	}
 	command->preExecute(commandSender, args);

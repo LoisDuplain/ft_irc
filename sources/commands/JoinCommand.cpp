@@ -76,14 +76,14 @@ bool	JoinCommand::execute(User *commandSender, std::vector<std::string> args)
 			if (channel->getUser(commandSender->getNickname()) == commandSender)
 				return true;
 			else if (channel->getBannedUser(commandSender->getNickname()) == commandSender)
-				commandSender->sendSTDPacket(ERR_BANNEDFROMCHAN, "JOIN " + channel->getName() + " :You are banned from this channel");
+				commandSender->sendSTDPacket(ERR_BANNEDFROMCHAN, "JOIN " + channel->getName() + " :Cannot join channel (+b)");
 			else if (channel->getInvitedUser(commandSender->getNickname()) != commandSender && channel->isInviteOnly())
-				commandSender->sendSTDPacket(ERR_INVITEONLYCHAN, "JOIN " + channel->getName() + " :You need to be invited to join this channel");
+				commandSender->sendSTDPacket(ERR_INVITEONLYCHAN, "JOIN " + channel->getName() + " :Cannot join channel (+i)");
 			else if (channel->getUsers().size() == channel->getMaxSize())
-				commandSender->sendSTDPacket(ERR_CHANNELISFULL, "JOIN " + channel->getName() + " :Channel is full");
+				commandSender->sendSTDPacket(ERR_CHANNELISFULL, "JOIN " + channel->getName() + " :Cannot join channel (+l)");
 			else if ((keys.size() > i && channel->getPassword() != keys.at(i))
 			|| (keys.size() == 0 && channel->getPassword() != ""))
-				commandSender->sendSTDPacket(ERR_BADCHANNELKEY, "JOIN " + channel->getName() + " :Bad password");
+				commandSender->sendSTDPacket(ERR_BADCHANNELKEY, "JOIN " + channel->getName() + " :Cannot join channel (+k)");
 			else
 			{
 				channel->removeInvitedUser(commandSender);
