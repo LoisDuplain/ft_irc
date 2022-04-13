@@ -70,12 +70,18 @@ void connectToServer(User *user)
 	if (!user->getNickname().empty() && !user->getUsername().empty())
 	{
 		user->setAuthenticated(true);
-		std::string msg;
-		msg = ":" + user->getIp() + " " + RPL_WELCOME + " " + user->getNickname() + " :Welcome to our IRC server!\r\n";
-		send(user->getSocket(), msg.c_str(), msg.size(), 0);
-
-		msg = ":server " + std::string(RPL_MYINFO) + " " + user->getNickname() + " : ircserv 2.0\r\n";
-		send(user->getSocket(), msg.c_str(), msg.size(), 0);
+		
+		user->sendSTDPacket(RPL_WELCOME, user->getNickname() + " :Welcome to our irc server !");
+		user->sendSTDPacket(RPL_MYINFO, user->getNickname() + " :It has been created by jcambaki (Jeremie Cambakidis) and lduplain (Lois Duplain)");
+		user->sendSTDPacket(RPL_MYINFO, user->getNickname() + " :");
+		user->sendSTDPacket(RPL_MYINFO, user->getNickname() + " :This server is useless");
+		user->sendSTDPacket(RPL_MYINFO, user->getNickname() + " :");
+		user->sendSTDPacket(RPL_MYINFO, user->getNickname() + " :|    _    _       _       _____ _____   _____ ");
+		user->sendSTDPacket(RPL_MYINFO, user->getNickname() + " :| (_) |  | |     | |     |_   _|  __ \\ / ____|");
+		user->sendSTDPacket(RPL_MYINFO, user->getNickname() + " :|  _| |__| | __ _| |_ ___  | | | |__) | |     ");
+		user->sendSTDPacket(RPL_MYINFO, user->getNickname() + " :| | |  __  |/ _` | __/ _ \\ | | |  _  /| |     ");
+		user->sendSTDPacket(RPL_MYINFO, user->getNickname() + " :| | | |  | | (_| | ||  __/_| |_| | \\ \\| |____ ");
+		user->sendSTDPacket(RPL_MYINFO, user->getNickname() + " :| |_|_|  |_|\\__,_|\\__\\___|_____|_|  \\_\\\\_____|");
 	}
 }
 
